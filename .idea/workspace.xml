@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="96a41ba1-f206-4ca6-a041-d64fe3c1c9f6" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shape_recognize/img_CV2_90.jpg" afterPath="$PROJECT_DIR$/shape_recognize/img_CV2_90.jpg" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shape_recognize/read_write_cv2_stream_to_jpg.py" afterPath="$PROJECT_DIR$/shape_recognize/read_write_cv2_stream_to_jpg.py" />
     </list>
@@ -19,11 +18,12 @@
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/image-recognition$convert_cv2_to_pil.coverage" NAME="convert_cv2_to_pil Coverage Results" MODIFIED="1460041332961" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/shape_recognize" />
+    <SUITE FILE_PATH="coverage/image-recognition$color_detection.coverage" NAME="color_detection Coverage Results" MODIFIED="1460294504351" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/shape_recognize" />
     <SUITE FILE_PATH="coverage/image-recognition$image_processing.coverage" NAME="image_processing Coverage Results" MODIFIED="1460039649692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/shape_recognize" />
     <SUITE FILE_PATH="coverage/image-recognition$image_gradients.coverage" NAME="image_gradients Coverage Results" MODIFIED="1460039224514" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/shape_recognize" />
     <SUITE FILE_PATH="coverage/image-recognition$video_gradients.coverage" NAME="video_gradients Coverage Results" MODIFIED="1460040862440" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/shape_recognize" />
     <SUITE FILE_PATH="coverage/image-recognition$main.coverage" NAME="main Coverage Results" MODIFIED="1460038860593" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/shape_recognize" />
-    <SUITE FILE_PATH="coverage/image-recognition$read_write_cv2_stream_to_jpg.coverage" NAME="read_write_cv2_stream_to_jpg Coverage Results" MODIFIED="1460290830989" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/shape_recognize" />
+    <SUITE FILE_PATH="coverage/image-recognition$read_write_cv2_stream_to_jpg.coverage" NAME="read_write_cv2_stream_to_jpg Coverage Results" MODIFIED="1460294976484" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/shape_recognize" />
     <SUITE FILE_PATH="coverage/image-recognition$optical_flow.coverage" NAME="optical_flow Coverage Results" MODIFIED="1460290413819" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/shape_recognize" />
   </component>
   <component name="CreatePatchCommitExecutor">
@@ -38,33 +38,11 @@
       <file leaf-file-name="read_write_cv2_stream_to_jpg.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/shape_recognize/read_write_cv2_stream_to_jpg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.22193211">
-              <caret line="11" column="4" selection-start-line="11" selection-start-column="4" selection-end-line="11" selection-end-column="4" />
+            <state vertical-scroll-proportion="0.5117493">
+              <caret line="16" column="24" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="optical_flow.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/shape_recognize/optical_flow.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="46" column="0" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="video_gradients.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/shape_recognize/video_gradients.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="17" column="4" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="4" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -89,6 +67,7 @@
         <option value="$PROJECT_DIR$/shape_recognize/video_gradients.py" />
         <option value="$PROJECT_DIR$/shape_recognize/convert_cv2_to_pil.py" />
         <option value="$PROJECT_DIR$/shape_recognize/optical_flow.py" />
+        <option value="$PROJECT_DIR$/shape_recognize/color_detection.py" />
         <option value="$PROJECT_DIR$/shape_recognize/read_write_cv2_stream_to_jpg.py" />
       </list>
     </option>
@@ -100,7 +79,8 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
-    <option name="width" value="1370" />
+    <option name="y" value="-8" />
+    <option name="width" value="1382" />
     <option name="height" value="744" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
@@ -215,24 +195,6 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
     </configuration>
-    <configuration default="false" name="image_processing" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shape_recognize" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="image-recognition" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/shape_recognize/image_processing.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <method />
-    </configuration>
     <configuration default="false" name="convert_cv2_to_pil" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -283,6 +245,24 @@
       <module name="image-recognition" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/shape_recognize/optical_flow.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="color_detection" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shape_recognize" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="image-recognition" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/shape_recognize/color_detection.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
@@ -482,18 +462,18 @@
     </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.video_gradients" />
-      <item index="1" class="java.lang.String" itemvalue="Python.image_processing" />
-      <item index="2" class="java.lang.String" itemvalue="Python.convert_cv2_to_pil" />
-      <item index="3" class="java.lang.String" itemvalue="Python.read_write_cv2_stream_to_jpg" />
-      <item index="4" class="java.lang.String" itemvalue="Python.optical_flow" />
+      <item index="1" class="java.lang.String" itemvalue="Python.convert_cv2_to_pil" />
+      <item index="2" class="java.lang.String" itemvalue="Python.read_write_cv2_stream_to_jpg" />
+      <item index="3" class="java.lang.String" itemvalue="Python.optical_flow" />
+      <item index="4" class="java.lang.String" itemvalue="Python.color_detection" />
     </list>
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Python.read_write_cv2_stream_to_jpg" />
-        <item index="1" class="java.lang.String" itemvalue="Python.optical_flow" />
-        <item index="2" class="java.lang.String" itemvalue="Python.convert_cv2_to_pil" />
-        <item index="3" class="java.lang.String" itemvalue="Python.video_gradients" />
-        <item index="4" class="java.lang.String" itemvalue="Python.image_processing" />
+        <item index="1" class="java.lang.String" itemvalue="Python.color_detection" />
+        <item index="2" class="java.lang.String" itemvalue="Python.optical_flow" />
+        <item index="3" class="java.lang.String" itemvalue="Python.convert_cv2_to_pil" />
+        <item index="4" class="java.lang.String" itemvalue="Python.video_gradients" />
       </list>
     </recent_temporary>
   </component>
@@ -511,10 +491,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="0" width="1370" height="744" extended-state="0" />
-    <editor active="false" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25801528" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25567323" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -571,10 +551,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/shape_recognize/optical_flow.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
+        <state vertical-scroll-proportion="0.7180157">
           <caret line="46" column="0" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#0#18#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -587,6 +567,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/shape_recognize/color_detection.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="20" column="25" selection-start-line="20" selection-start-column="25" selection-end-line="20" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/shape_recognize/img_CV2_90.jpg">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -594,8 +584,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/shape_recognize/read_write_cv2_stream_to_jpg.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.22193211">
-          <caret line="11" column="4" selection-start-line="11" selection-start-column="4" selection-end-line="11" selection-end-column="4" />
+        <state vertical-scroll-proportion="0.5117493">
+          <caret line="16" column="24" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
