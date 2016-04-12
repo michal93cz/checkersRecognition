@@ -11,17 +11,21 @@ while(1):
     # Convert BGR to HSV
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    # define range of blue color in HSV
-    lower_blue = np.array([110,50,50])
-    upper_blue = np.array([130,255,255])
-
-    # zakres brany z http://www.rapidtables.com/web/color/RGB_Color.htm
+    # define range of colors
+    # blue
+    lower_blue = np.array([92,0,0])
+    upper_blue = np.array([124,256,256])
+    # red
+    lower_red = cv2.inRange(hsv, np.array([0, 100, 100]), np.array([10, 255, 255]))
+    upper_red = cv2.inRange(hsv, np.array([160, 100, 100]), np.array([179, 255, 255]))
     # fiolet
-    lower = np.array([153,0,78])
-    upper = np.array([255,204,229])
-    # Threshold the HSV image to get only blue colors
+    lower_violet = np.array([153,0,78])
+    upper_violet = np.array([255,204,229])
+    # masks
     # mask = cv2.inRange(hsv, lower_blue, upper_blue)
-    mask = cv2.inRange(hsv, lower, upper)
+    mask = cv2.addWeighted(lower_red,1.0,upper_red,1.0,0.0)
+    # mask = cv2.inRange(hsv,lower_violet, upper_violet)
+    # zakres brany z http://www.rapidtables.com/web/color/RGB_Color.html
     # Bitwise-AND mask and original image
     res = cv2.bitwise_and(frame,frame, mask= mask)
 
