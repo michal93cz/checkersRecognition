@@ -28,7 +28,6 @@ while(1):
     # zakres brany z http://www.rapidtables.com/web/color/RGB_Color.html
     # Bitwise-AND mask and original image
     res = cv2.bitwise_and(frame,frame, mask= mask)
-
     cv2.imshow('frame',frame)
     cv2.imshow('mask',mask)
     cv2.imshow('res',res)
