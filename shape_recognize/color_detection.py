@@ -18,12 +18,15 @@ while(1):
     # red
     lower_red = cv2.inRange(hsv, np.array([0, 100, 100]), np.array([10, 255, 255]))
     upper_red = cv2.inRange(hsv, np.array([160, 100, 100]), np.array([179, 255, 255]))
+    # black
+    black = cv2.inRange(hsv, np.array([0,0,0]), np.array([180,255,30]))
     # fiolet
     lower_violet = np.array([153,0,78])
     upper_violet = np.array([255,204,229])
     # masks
     # mask = cv2.inRange(hsv, lower_blue, upper_blue)
-    mask = cv2.addWeighted(lower_red,1.0,upper_red,1.0,0.0)
+    mask = black
+    # mask = cv2.addWeighted(lower_red,1.0,upper_red,1.0,0.0)
     # mask = cv2.inRange(hsv,lower_violet, upper_violet)
     # zakres brany z http://www.rapidtables.com/web/color/RGB_Color.html
     # Bitwise-AND mask and original image
