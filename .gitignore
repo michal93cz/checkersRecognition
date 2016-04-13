@@ -43,3 +43,9 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 .idea/workspace.xml
+*.xml
+.idea/workspace.xml
+*.iml
+.idea/workspace.xml
+*.name
+.idea/workspace.xml
