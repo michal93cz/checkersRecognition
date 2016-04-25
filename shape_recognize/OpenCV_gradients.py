@@ -1,6 +1,20 @@
 import numpy as np
 import cv2
-import glob
+
+# function needed to change 7x7 matrix to 8x8 and calculate missing points
+def insert_value(ndarray, value_x, value_y):
+    result = ndarray
+    result.resize((64,2))
+    acumulator = result[6]
+    for x in range(1,(result.size/2)-7):
+        if(x % 8 == 0):
+            for y in range((result.size/2)-1,x-1,-1):
+                result[y] = result[y-1]
+            result[(x-1)] = result[(x-1)-1] + value_x
+            x += 1
+    for x in range(56,64):
+        result[x] = result[x-8] + value_y
+    return result
 
 # termination criteria
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -23,24 +37,33 @@ upper_blue = np.array([124,256,256])
 
 mask = cv2.inRange(hsv, lower_blue, upper_blue)
 
+
 output = np.array([[]])
 ret = False
     # Find the chess board corners
 ret, corners = cv2.findChessboardCorners(gray, (7,7), output)
     # If found, add object points, image points (after refining them)
 if ret == True:
-    # (image, corners, winSize, zeroZone, criteria)
+    # calculate lenght between two adjecent points
     x_substract = corners[01,[0]] - corners[00,[0]]
     y_substract = corners[07,[0]] - corners[00,[0]]
-    cv2.cornerSubPix(gray, corners, (11,11), (-1,-1), criteria)
-    # Przesuniecie punktow na srodek pol
-    corners = np.subtract(corners, x_substract/2)
-    corners = np.subtract(corners, y_substract/2)
 
-    imgpoints.append(corners)
-        # Draw and display the corners
+    result = np.copy(corners)
+    result.resize((64,2))
+
+    insert_value(result, x_substract, y_substract)
+    result.resize((64,1,2))
+    # cv2.cornerSubPix(gray, corners, (11,11), (-1,-1), criteria)
+    # Przesuniecie punktow na srodek pol
+    result = np.subtract(result, x_substract/2)
+    result = np.subtract(result, y_substract/2)
+
+    imgpoints.append(result)
+    # Draw and display the corners
     res = cv2.bitwise_and(img,img, mask= mask)
-    cv2.drawChessboardCorners(res, (7,7), corners, ret)
+    cv2.drawChessboardCorners(res, (8,8),result, ret)
     cv2.imshow('img',res)
+    cv2.imshow('mask',mask)
     cv2.waitKey(0)
 cv2.destroyAllWindows()
+
