@@ -1,7 +1,9 @@
 import numpy as np
 import cv2
+from sampler_class import Sampler
 
 # function needed to change 7x7 matrix to 8x8 and calculate missing points
+
 def insert_value(ndarray, value_x, value_y):
     result = ndarray
     result.resize((64,2))
@@ -60,10 +62,21 @@ if ret == True:
 
     imgpoints.append(result)
     # Draw and display the corners
+
+    #****************************************************       #M.Werda test
+    print(Sampler.check_colors(img, result))
+    #****************************************************
+
+
     res = cv2.bitwise_and(img,img, mask= mask)
     cv2.drawChessboardCorners(res, (8,8),result, ret)
     cv2.imshow('img',res)
     cv2.imshow('mask',mask)
     cv2.waitKey(0)
 cv2.destroyAllWindows()
+
+
+
+
+
 
