@@ -23,9 +23,15 @@ while(1):
     # fiolet
     lower_violet = np.array([153,0,78])
     upper_violet = np.array([255,204,229])
+    # green
+    # lower_green = np.array([34,139,34])
+    # upper_green = np.array([152,251,230])
+    lower_green = np.array([40,70,70])
+    upper_green = np.array([80,200,200])
     # masks
     # mask = cv2.inRange(hsv, lower_blue, upper_blue)
-    mask = black
+    # mask = black
+    mask = cv2.inRange(hsv, lower_green, upper_green )
     # mask = cv2.addWeighted(lower_red,1.0,upper_red,1.0,0.0)
     # mask = cv2.inRange(hsv,lower_violet, upper_violet)
     # zakres brany z http://www.rapidtables.com/web/color/RGB_Color.html
