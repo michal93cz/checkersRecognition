@@ -1,3 +1,4 @@
+import checkersRecognition.checkersLib.checkers
 from enum import Enum
 
 class PIECE(Enum):
