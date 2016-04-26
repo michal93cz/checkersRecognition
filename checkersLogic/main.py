@@ -1,4 +1,4 @@
-import checkersRecognition.checkersLib.checkers
+from checkersLib.checkers import CheckersInterface
 from enum import Enum
 
 class PIECE(Enum):
@@ -27,3 +27,6 @@ def move_white_paws(type, fromWhere, toWhere):
     if BOARD_ARRAY[toWhere[0]][toWhere[1]] != 0:
         BOARD_ARRAY[toWhere[0]][toWhere[1]] = type
         BOARD_ARRAY[fromWhere[0]][fromWhere[1]] = 0
+
+CI = CheckersInterface()
+CI.master.mainloop()
