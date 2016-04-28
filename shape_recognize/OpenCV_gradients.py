@@ -1,6 +1,8 @@
 import numpy as np
 import cv2
 from sampler_class import Sampler
+from state_representation.state_repr import Repr
+import time
 
 # function needed to change 7x7 matrix to 8x8 and calculate missing points
 
@@ -63,10 +65,17 @@ if ret == True:
     imgpoints.append(result)
     # Draw and display the corners
 
-    #****************************************************       #M.Werda test
-    print(Sampler.check_colors(img, result))
     #****************************************************
+    #M.Werda test
+    #analyze points in lattice
+    #create representation in RGB
+    #RGB to BGR and PIL to cv
 
+    table = Sampler.check_colors(img, result)
+    image = Repr.create_representation(table)
+    image_cv = (np.array(image))[:, :, ::-1].copy()
+    cv2.imshow('representation', image_cv)
+    #****************************************************
 
     res = cv2.bitwise_and(img,img, mask= mask)
     cv2.drawChessboardCorners(res, (8,8),result, ret)

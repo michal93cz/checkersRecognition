@@ -31,7 +31,7 @@ class Sampler:
     @staticmethod
     def array_to_color(array):                          #WIOCHA ale nie rozgryzlem jak to zrobic slownikiem
         if Sampler.matches(array, Sampler.low_blue, Sampler.high_blue):
-            return 'bllue'                              #       pun intended
+            return 'blue'
         if Sampler.matches(array, Sampler.low_black, Sampler.high_black):
             return 'black'
         if Sampler.matches(array, Sampler.low_white, Sampler.high_white):
@@ -48,12 +48,14 @@ class Sampler:
         for element in coord.astype(int):
             result[b].append(Sampler.array_to_color(image[element[0][1]][element[0][0]]))
             a += 1
-            if a == 8:
+            if a == number:
                 table.add_row(result[b])
                 a = 0
                 b += 1
-                result.append([])
-        return table
+                if b != number:
+                    result.append([])
+        print(table)
+        return result
 
     @staticmethod
     def matches(array, low, high):
