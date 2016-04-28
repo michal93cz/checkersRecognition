@@ -33,7 +33,7 @@ imgpoints = [] # 2d points in image plane.
 
 
 # img = cv2.imread('../pictures/day_light/position1.jpg')
-img = cv2.imread('../pictures/artificial_light/position1.jpg')
+img = cv2.imread('../pictures/artificial_light/position2.jpg')
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     # blue

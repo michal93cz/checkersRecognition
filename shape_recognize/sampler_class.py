@@ -5,17 +5,19 @@ from prettytable import PrettyTable
 class Sampler:
     number_of_tiles = 8
 
-    low_blue = [115, 90, 0]             #format BGR!!
-    high_blue = [195, 135, 20]
+    low_blue = [105, 60, 0]             #format BGR!!
+    high_blue = [205, 155, 60]
 
     low_black = [0, 0, 0]
     high_black = [60, 60, 60]
 
-    low_white = [150, 180, 180]
+    low_white = [130, 130, 130]
     high_white = [256, 256, 256]
 
-    low_green = [25, 70, 0]
+    low_green = [5, 50, 0]
     high_green = [80, 160, 70]
+
+    debug = 1
 
     @staticmethod
     def check_colors(img, coord):
@@ -45,16 +47,27 @@ class Sampler:
         a = 0
         b = 0
         table = PrettyTable()
-        for element in coord.astype(int):
+        pos = []
+        color = []
+        clear_row = ['','','','','','','','']
+        for element in reversed(coord.astype(int)):
             result[b].append(Sampler.array_to_color(image[element[0][1]][element[0][0]]))
             a += 1
+            pos.append(str(element[0][1]) + ' ' + str(element[0][0]))
+            color.append(str(image[element[0][1]][element[0][0]]))
             if a == number:
                 table.add_row(result[b])
+                table.add_row(pos)
+                table.add_row(color)
+                table.add_row(clear_row)
+                color = []
+                pos = []
                 a = 0
                 b += 1
                 if b != number:
                     result.append([])
-        print(table)
+        if Sampler.debug == 1:
+            print(table)
         return result
 
     @staticmethod
