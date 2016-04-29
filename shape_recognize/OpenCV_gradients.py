@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 from sampler_class import Sampler
 from state_representation.state_repr import Repr
+from PIL import Image, ImageEnhance
 import time
 
 # function needed to change 7x7 matrix to 8x8 and calculate missing points
@@ -33,13 +34,14 @@ imgpoints = [] # 2d points in image plane.
 
 
 # img = cv2.imread('../pictures/day_light/position1.jpg')
-img = cv2.imread('../pictures/artificial_light/position2.jpg')
+img = cv2.imread('../pictures/day_light/position4.jpg')
+# img = cv2.medianBlur(img, 7)
+
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     # blue
 lower_blue = np.array([92,0,0])
 upper_blue = np.array([124,256,256])
-
 mask = cv2.inRange(hsv, lower_blue, upper_blue)
 
 
@@ -71,11 +73,14 @@ if ret == True:
     #analyze points in lattice
     #create representation in RGB
     #RGB to BGR and PIL to cv
-
+    img = cv2.multiply(img, np.array([1.1]))
+    img = cv2.medianBlur(img, 7)
     table = Sampler.check_colors(img, result)
     image = Repr.create_representation(table)
     image_cv = (np.array(image))[:, :, ::-1].copy()
     cv2.imshow('representation', image_cv)
+
+    cv2.imshow('contrast', img)
     #****************************************************
 
     res = cv2.bitwise_and(img,img, mask= mask)
