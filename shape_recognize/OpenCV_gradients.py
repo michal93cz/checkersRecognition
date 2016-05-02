@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 from sampler_class import Sampler
 from state_representation.state_repr import Repr
-from PIL import Image, ImageEnhance
+from state_representation.math import Math
 import time
 
 # function needed to change 7x7 matrix to 8x8 and calculate missing points
@@ -33,9 +33,7 @@ objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 
 
-# img = cv2.imread('../pictures/day_light/position1.jpg')
-img = cv2.imread('../pictures/day_light/position4.jpg')
-# img = cv2.medianBlur(img, 7)
+img = cv2.imread('../pictures/artificial_light/position4.jpg')
 
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -65,6 +63,10 @@ if ret == True:
     result = np.subtract(result, x_substract/2)
     result = np.subtract(result, y_substract/2)
 
+    #************************************************** to change orientation if necessary
+    result = Math.alter_chessboard_middles(img, result)
+    #***************************************************
+
     imgpoints.append(result)
     # Draw and display the corners
 
@@ -79,7 +81,6 @@ if ret == True:
     image = Repr.create_representation(table)
     image_cv = (np.array(image))[:, :, ::-1].copy()
     cv2.imshow('representation', image_cv)
-
     cv2.imshow('contrast', img)
     #****************************************************
 
@@ -89,9 +90,5 @@ if ret == True:
     cv2.imshow('mask',mask)
     cv2.waitKey(0)
 cv2.destroyAllWindows()
-
-
-
-
 
 
