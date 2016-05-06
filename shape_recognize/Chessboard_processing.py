@@ -1,5 +1,7 @@
 import numpy as np
 import cv2
+from state_representation.math import Math
+
 from sampler_class import Sampler
 from state_representation.state_repr import Repr
 from PIL import Image, ImageEnhance
@@ -36,7 +38,8 @@ imgpoints = [] # 2d points in image plane.
 lower_blue = np.array([92,0,0])
 upper_blue = np.array([124,256,256])
 
-
+def numeric_compare(x, y):
+        return x - y
 
 output = np.array([[]])
 
@@ -71,15 +74,21 @@ while(True):
         result = np.copy(corners)
         result.resize((64,2))
 
+
         insert_value(result, x_substract, y_substract)
+
         result.resize((64,1,2))
         # cv2.cornerSubPix(gray, corners, (11,11), (-1,-1), criteria)
         # Przesuniecie punktow na srodek pol
         result = np.subtract(result, x_substract/2)
         result = np.subtract(result, y_substract/2)
+
         # reading from file
         img = scipy.misc.imread('outfile.jpg')
 
+        #************************************************** to change orientation if necessary
+        result = Math.alter_chessboard_middles(img, result)
+        #***************************************************
         imgpoints.append(result)
         # Draw and display the corners
 
