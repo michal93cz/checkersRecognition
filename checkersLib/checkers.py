@@ -8,8 +8,8 @@ import string
 
 class CheckersInterface:
     DEBUG = 1
-    DEBUG_BIG_THINGS = 0
-    DEBUG_PRINT_FUNCTIONS = 0
+    DEBUG_BIG_THINGS = 1
+    DEBUG_PRINT_FUNCTIONS = 1
     # The Tuneable Constants
     DELAY = 0  # 885=1 sec.
     SQUARESIZE = 50
@@ -164,7 +164,10 @@ class CheckersInterface:
         self.moving = "black"  # reversed since setup_move will switch it.
 
         if self.DEBUG_BIG_THINGS:
-            print self.pieces
+            print "self.pieces: ", self.pieces
+
+        # self.set_piece(42, 86)
+        # self.set_square(47)
 
         self.MoveLoop()
 
@@ -244,7 +247,7 @@ class CheckersInterface:
         not_crowning = 1
         for piece in self.pieces[self.moving]:
             if self.DEBUG_BIG_THINGS:
-                print self.c.coords(piece)
+                print "self.c.coords(piece): ", self.c.coords(piece)
             if self.moving == "black":
                 if self.c.coords(piece)[1] == self.piece_offset:
                     if self.DEBUG:
@@ -261,7 +264,7 @@ class CheckersInterface:
         # Dobble Jump checker
         self.check_for_jumps()
         if self.DEBUG_BIG_THINGS:
-            print self.jumps[0], self.jump_made
+            print "self.jumps[0], self.jump_made: ", self.jumps[0], self.jump_made
         same_piece = 0
         for foo in self.jumps[0]:
             if foo[0] == self.piece:
@@ -277,7 +280,7 @@ class CheckersInterface:
                 self.history[-1].append((self.c.itemcget(foo, "fill"), self.c.coords(foo), \
                                          self.c.itemcget(foo, "width")))
             if self.DEBUG_BIG_THINGS:
-                print self.history
+                print "self.history: ", self.history
             self.jumps = [[], []]
             if self.moving == "black":
                 self.moving = "red"
@@ -303,6 +306,7 @@ class CheckersInterface:
             self.c.itemconfig(self.piece_square, outline="black", width=1)
         try:
             self.piece_square, self.piece = self.c.find_overlapping(event.x, event.y, event.x, event.y)
+            print "self.piece_square, self.piece: ", self.c.find_overlapping(event.x, event.y, event.x, event.y)
         except ValueError:
             return
         self.got_piece = 1
@@ -313,6 +317,23 @@ class CheckersInterface:
             self.got_piece = 0
         else:
             self.c.itemconfig(self.piece_square, outline="blue", width=3)
+
+    def set_piece(self, piece_square, piece):
+        print "i am in set_piece"
+        if self.DEBUG_PRINT_FUNCTIONS:
+            pass;
+            print "set_piece"
+        try:
+            self.piece_square = piece_square
+            self.piece = piece
+        except ValueError:
+            return
+        self.got_piece = 1
+
+        if self.check_piece():  # positive numbers are failure, for check_piece
+            self.piece_square = None
+            self.piece = None
+            self.got_piece = 0
 
     def check_piece(self):
         """check_piece is called after get_piece returns.  It checks the color
@@ -336,6 +357,17 @@ class CheckersInterface:
             print "got_square_click"
         if self.got_piece:
             self.square = self.c.find_overlapping(event.x, event.y, event.x, event.y)
+            if self.DEBUG:
+                print "got square:", self.square
+            self.got_move = 1
+
+    def set_square(self, square):
+        print "i am in set_square"
+        if self.DEBUG_PRINT_FUNCTIONS:
+            pass;
+            print "got_square_click"
+        if self.got_piece:
+            self.square = square
             if self.DEBUG:
                 print "got square:", self.square
             self.got_move = 1
@@ -544,7 +576,7 @@ class CheckersInterface:
                         self.jumps[1].append(self.quux)
                 self.quux = None
         if self.DEBUG_BIG_THINGS:
-            print self.jumps
+            print "self.jumps: ", self.jumps
 
     def jumpable(self, vtr, sqr_coords):
         """This function will determine, based on self.piece & self.square,
@@ -700,7 +732,7 @@ class CheckersInterface:
         """This is a function which will remove the piece which is
         clicked on."""
         piece = self.c.find_overlapping(event.x, event.y, event.x, event.y)
-        print piece
+        print "piece: ", piece
         if len(piece) == 2 and self.c.type(piece[1]) == "oval":
             piece = piece[1]
             self.c.delete(piece)
