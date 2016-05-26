@@ -2,12 +2,10 @@
 
 I made it to play out checkers problems I found."""
 
-from Tkinter import *
 import string
-import threading
 
 
-class CheckersInterface(threading.Thread):
+class CheckersInterface():
     DEBUG = 1
     DEBUG_BIG_THINGS = 1
     DEBUG_PRINT_FUNCTIONS = 1
@@ -25,113 +23,9 @@ class CheckersInterface(threading.Thread):
 
         self.piece_offset = (self.SQUARESIZE - self.PIECE_DIAMETER)  # calulation saver
 
-        if master == None:  # master creator
-            master = Tk()
-        self.master = master
-        self.master.title("Checkers")
-        if self.DEBUG:
-            self.master.bind("<2>", self.remove_piece)
-        self.master.protocol("WM_DELETE_WINDOW", self.end)  # handle the exit
-        self.master.bind("<Escape>", self.end)
-        # self.master.bind("t", self.erace_temporary)
-        # /|\
-        # |  there are no temporary objects
-        self.master.bind("n", self.show_numbers_toggle)
-        self.master.bind("[", self.go_to_move)
-        self.master.bind("a", self.toggle_add_mode)
-        self.master.bind("r", self.toggle_remove_mode)
-        self.master.bind("d", self.do_move_one)
         self.make_display()
 
         self.begin_new_game()
-
-        threading.Thread.__init__(self)
-        # self.start()
-
-    def run(self):
-        self.master.mainloop()
-
-    def make_display(self):
-        """This function will create the Canvas for the board, and then the board.
-        The variables required by this function are:
-            self.master, self.SQUARESIZE."""
-        foo = self.SQUARESIZE * 8  # calculation saver
-        self.c = Canvas(self.master, height=foo, width=foo)
-        self.message = Label(self.master, text="", bd=2, relief=RAISED, \
-                             font=("", "10", ""))
-        self.make_checker_squares(0, 7, "bisque")
-        self.make_checker_squares(1, 8, "green3", "squares")
-
-        history_scroll = Scrollbar(self.master)
-        self.history_display = Listbox(self.master, yscrollcommand=history_scroll.set)
-        history_scroll.config(command=self.history_display.yview)
-        self.history_display.bind("<Double-Button-1>", self.go_to_move)
-        self.c.grid(row=1, column=0)
-        self.message.grid(row=0, column=0, columnspan=3, pady=5)
-        self.history_display.grid(row=1, column=1, sticky=N + S)
-        history_scroll.grid(row=1, column=2, sticky=N + S)
-
-        for baz in self.c.find_overlapping(self.SQUARESIZE * 1.5, \
-                                           self.SQUARESIZE * 0.5, \
-                                           self.SQUARESIZE * 1.5, \
-                                           self.SQUARESIZE * 0.5):
-            if self.c.type(baz) == "rectangle":
-                self.upper_corner_square = baz
-
-    def toggle_add_mode(self, unused):
-        """This will put the game in add mode.  In this mode, you can add red
-        pieces with a left click and black pieces with a right click."""
-        if self.add_mode:
-            self.add_mode = 0
-            self.master.unbind("<1>")
-            self.master.unbind("<2>")
-
-            self.c.tag_bind("pieces", "<1>", self.get_piece_click)
-            self.c.tag_bind("squares", "<1>", self.get_square_click)
-        else:
-            self.add_mode = 1
-            self.master.bind("<1>", self.make_a_piece)
-            self.master.bind("<2>", self.make_a_piece)
-
-            self.remove_mode = 0
-            self.c.tag_unbind("pieces", "<1>")
-            self.c.tag_unbind("squares", "<1>")
-
-    def toggle_remove_mode(self, unused):
-        if self.remove_mode:
-            self.remove_mode = 0
-            self.master.unbind("<1>")
-
-            self.c.tag_bind("pieces", "<1>", self.get_piece_click)
-            self.c.tag_bind("squares", "<1>", self.get_square_click)
-        else:
-            self.remove_mode = 1
-            self.master.bind("<1>", self.remove_piece)
-
-            self.add_mode = 0
-            self.master.unbind("<2>")
-            self.c.tag_unbind("pieces", "<1>")
-            self.c.tag_unbind("squares", "<1>")
-
-    def show_numbers_toggle(self, unused=None):
-        """This shows little white numbers in the corner of each square"""
-        if self.c.type("numbers") == "text":
-            self.c.delete("numbers")
-        else:
-            number = 1
-            start = self.SQUARESIZE + 10;
-            stop = self.SQUARESIZE * 8
-            for y in range(10, self.SQUARESIZE * 8, self.SQUARESIZE):
-                for x in range(start, stop, self.SQUARESIZE * 2):
-                    self.c.create_text(x, y, text=str(number), fill="white", tags="numbers")
-                    number = number + 1
-                if start == self.SQUARESIZE + 10:
-                    start = 10;
-                    stop = self.SQUARESIZE * 7
-                else:
-                    if start == 10:
-                        start = self.SQUARESIZE + 10;
-                        stop = self.SQUARESIZE * 8
 
     def begin_new_game(self):
         """This is the function that begins a new game.  It will be run whenever
@@ -156,7 +50,6 @@ class CheckersInterface(threading.Thread):
         self.jump_made = None
         self.c.delete("win_text")
         self.history = []
-        self.history_display.delete(0, END)
 
         # flag setting
         self.got_move = 0
@@ -167,9 +60,6 @@ class CheckersInterface(threading.Thread):
 
         self.make_pieces("black", self.DELAY)
         self.make_pieces("red", self.DELAY)
-
-        self.c.tag_bind("pieces", "<1>", self.get_piece_click)
-        self.c.tag_bind("squares", "<1>", self.get_square_click)
 
         self.moving = "black"  # reversed since setup_move will switch it.
 
@@ -188,7 +78,7 @@ class CheckersInterface(threading.Thread):
         while not self.GameDone():
             if self.end_now:
                 break
-            self.master.update()
+                print "End of game"
             if self.got_move:
                 if not self.check_move():
                     # whenever a move is gotten which is correct, do this stuff
@@ -199,28 +89,9 @@ class CheckersInterface(threading.Thread):
                 # whenever a move is goten, do this stuff
                 self.cleanup_move(1)
         if self.GameDone() == 2:
-            self.c.create_text(int(self.c.cget("height")) / 2, \
-                               int(self.c.cget("width")) / 2, \
-                               text="Black Won!!!", fill="black", \
-                               font=("", "20", ""), tag="win_text")
+            print "Black won!!!"
         if self.GameDone() == 1:
-            self.c.create_text(int(self.c.cget("height")) / 2, \
-                               int(self.c.cget("width")) / 2, \
-                               text="Red Won!!!", fill="black", \
-                               font=("", "23", ""), tag="win_text")
-            self.c.create_text(int(self.c.cget("height")) / 2, \
-                               int(self.c.cget("width")) / 2, \
-                               text="Red Won!!!", fill="red", \
-                               font=("", "20", ""), tag="win_text")
-            # import time
-            # start=time.time()
-            # while start-time.time() < 3:
-            #    self.master.update()
-
-        if self.AnotherGame():
-            self.begin_new_game()
-        else:
-            self.master.destroy()
+            print "Red won!!!"
 
         # ++++++++++++++++++++++++++++++++++++++++more detailed functions+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -233,7 +104,6 @@ class CheckersInterface(threading.Thread):
             self.piece = None
         if type == 2:
             self.got_piece = 0
-            self.c.itemconfig(self.piece_square, outline="black", width=1)
             self.jumps = [[], []]
         if type == 1:
             self.got_move = 0
@@ -248,6 +118,7 @@ class CheckersInterface(threading.Thread):
             print "setup_move"
         if self.DEBUG:
             print "lengh of history:", len(self.history)
+            print "history: ", self.history
             print "count:", self.count
 
         # kingmaker part
@@ -302,29 +173,6 @@ class CheckersInterface(threading.Thread):
         if self.DEBUG:
             print "lengh of history:", len(self.history)
 
-    def get_piece_click(self, event):
-        """This function is called when a piece is clicked on.  It sets
-        self.got_piece, and assigns the id of the piece clicked on to
-        self.piece"""
-        if self.DEBUG_PRINT_FUNCTIONS:
-            pass;
-            print "got_piece_click"
-        if self.piece != None:
-            self.c.itemconfig(self.piece_square, outline="black", width=1)
-        try:
-            self.piece_square, self.piece = self.c.find_overlapping(event.x, event.y, event.x, event.y)
-            print "self.piece_square, self.piece: ", self.c.find_overlapping(event.x, event.y, event.x, event.y)
-        except ValueError:
-            return
-        self.got_piece = 1
-
-        if self.check_piece():  # positive numbers are failure, for check_piece
-            self.piece_square = None
-            self.piece = None
-            self.got_piece = 0
-        else:
-            self.c.itemconfig(self.piece_square, outline="blue", width=3)
-
     def set_piece(self, piece_square, piece):
         print "i am in set_piece"
         if self.DEBUG_PRINT_FUNCTIONS:
@@ -354,19 +202,6 @@ class CheckersInterface(threading.Thread):
 
             return 1
         return 0
-
-    def get_square_click(self, event):
-        """This function is called when a square is clicked on.  It only acts if self.got_piece has been
-        set before.  When it acts, it sets self.got_move, and assigns the id of the square clicked on to
-        self.square."""
-        if self.DEBUG_PRINT_FUNCTIONS:
-            pass;
-            print "got_square_click"
-        if self.got_piece:
-            self.square = self.c.find_overlapping(event.x, event.y, event.x, event.y)
-            if self.DEBUG:
-                print "got square:", self.square
-            self.got_move = 1
 
     def set_square(self, square):
         print "i am in set_square"
@@ -653,7 +488,7 @@ class CheckersInterface(threading.Thread):
         color.  The color can be either "black" or "red".  If it is 0, they are placed on the top half of the board, if it is 1, on the bottom.
             The pieces are appended to the list variable corosponding to the color given, and they are given
             the tag "pieces".  The delay argument sets a delay(duh!), the unit
-            is about 885 per sec.            
+            is about 885 per sec.
             The variables required by this function are:
                 self.pieces(a dictionary of two lists, one for each side), self.c(a Canvas),
                 self.SQUARESIZE, self.piece_offset"""
@@ -774,22 +609,3 @@ class CheckersInterface(threading.Thread):
         if self.counter == 7:
             self.set_piece(51, 67)
             self.set_square((42,))
-
-def IDLEtest():
-    """Returns 1 when IDLE is running, 0 else.
-    Please let me know (through the IDLE-devl list) if you find a situation
-    where this gives the wrong answer."""
-    import sys
-    try:
-        if sys.stdin.__module__ == 'PyShell':
-            return 1
-        else:
-            return 0
-    except AttributeError:
-        return 0
-
-
-if __name__ == '__main__':
-    CI = CheckersInterface()
-    if not IDLEtest():
-        CI.master.mainloop()

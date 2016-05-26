@@ -1,13 +1,11 @@
-"""A simple program to play Checkers with two people from the same computer.
-
-I made it to play out checkers problems I found."""
-
 from Tkinter import *
-import string
+import time
 import threading
+import random
+import Queue
+import string
 
-
-class CheckersInterface(threading.Thread):
+class GuiPart:
     DEBUG = 1
     DEBUG_BIG_THINGS = 1
     DEBUG_PRINT_FUNCTIONS = 1
@@ -16,7 +14,8 @@ class CheckersInterface(threading.Thread):
     SQUARESIZE = 50
     PIECE_DIAMETER = 35
 
-    def __init__(self, master=None):
+    def __init__(self, master, queue):
+        self.queue = queue
         """This is the constructor. It includes some basic startup work that
         would not fit anywhere else, and then it calls self.begin_new_game.
         It does not require any variables."""
@@ -40,16 +39,10 @@ class CheckersInterface(threading.Thread):
         self.master.bind("[", self.go_to_move)
         self.master.bind("a", self.toggle_add_mode)
         self.master.bind("r", self.toggle_remove_mode)
-        self.master.bind("d", self.do_move_one)
+        # self.master.bind("d", self.do_move_one)
         self.make_display()
 
         self.begin_new_game()
-
-        threading.Thread.__init__(self)
-        # self.start()
-
-    def run(self):
-        self.master.mainloop()
 
     def make_display(self):
         """This function will create the Canvas for the board, and then the board.
@@ -222,7 +215,7 @@ class CheckersInterface(threading.Thread):
         else:
             self.master.destroy()
 
-        # ++++++++++++++++++++++++++++++++++++++++more detailed functions+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            # ++++++++++++++++++++++++++++++++++++++++more detailed functions+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     def cleanup_move(self, type):
         """This function clears various variables.  It has a type argument so
@@ -487,7 +480,7 @@ class CheckersInterface(threading.Thread):
         self.message, and self.master"""
         if self.DEBUG_PRINT_FUNCTIONS:
             pass;  # print "AnotherGame"
-        #         self.c.create_rectangle(0,0, int(self.c.cget('width')), \
+        # self.c.create_rectangle(0,0, int(self.c.cget('width')), \
         #                                 int(self.c.cget('height')), \
         #                                 stipple='gray50', fill='black',\
         #                                 tag='end_game_overlay')
@@ -516,7 +509,7 @@ class CheckersInterface(threading.Thread):
         else:
             return 0
 
-        # ++++++++++++++++++++++++++++++++++++++++++++++helper functions++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            # ++++++++++++++++++++++++++++++++++++++++++++++helper functions++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     def go_to_move(self, event=None, move_number=None, ):
         """This function will recreate previous positions by recreating all the pieces from the information
@@ -653,7 +646,7 @@ class CheckersInterface(threading.Thread):
         color.  The color can be either "black" or "red".  If it is 0, they are placed on the top half of the board, if it is 1, on the bottom.
             The pieces are appended to the list variable corosponding to the color given, and they are given
             the tag "pieces".  The delay argument sets a delay(duh!), the unit
-            is about 885 per sec.            
+            is about 885 per sec.
             The variables required by this function are:
                 self.pieces(a dictionary of two lists, one for each side), self.c(a Canvas),
                 self.SQUARESIZE, self.piece_offset"""
@@ -751,45 +744,81 @@ class CheckersInterface(threading.Thread):
             if self.DEBUG:
                 print "Not a piece!"
 
-    def do_move_one(self, unused=None):
-        self.counter += 1
-        if self.counter == 1:
-            self.set_piece(42, 86)
-            self.set_square((47, ))
-        if self.counter == 2:
-            self.set_piece(43, 87)
-            self.set_square((47, ))
-        if self.counter == 3:
-            self.set_piece(55, 67)
-            self.set_square((48, ))
-        if self.counter == 4:
-            self.set_piece(55, 67)
-            self.set_square((51,))
-        if self.counter == 5:
-            self.set_piece(41, 85)
-            self.set_square((45,))
-        if self.counter == 6:
-            self.set_piece(51, 67)
-            self.set_square((48,))
-        if self.counter == 7:
-            self.set_piece(51, 67)
-            self.set_square((42,))
+    def processIncoming(self):
+        """Handle all messages currently in the queue, if any."""
+        while self.queue.qsize():
+            try:
+                msg = self.queue.get(0)
+                # Check contents of message and do whatever is needed. As a
+                # simple test, print it (in real life, you would
+                # suitably update the GUI's display in a richer fashion).
+                print msg
+            except Queue.Empty:
+                # just on general principles, although we don't
+                # expect this branch to be taken in this case
+                pass
 
-def IDLEtest():
-    """Returns 1 when IDLE is running, 0 else.
-    Please let me know (through the IDLE-devl list) if you find a situation
-    where this gives the wrong answer."""
-    import sys
-    try:
-        if sys.stdin.__module__ == 'PyShell':
-            return 1
-        else:
-            return 0
-    except AttributeError:
-        return 0
+class ThreadedClient:
+    """
+    Launch the main part of the GUI and the worker thread. periodicCall and
+    endApplication could reside in the GUI part, but putting them here
+    means that you have all the thread controls in a single place.
+    """
+    def __init__(self, master):
+        """
+        Start the GUI and the asynchronous threads. We are in the main
+        (original) thread of the application, which will later be used by
+        the GUI as well. We spawn a new thread for the worker (I/O).
+        """
+        self.master = master
 
+        # Create the queue
+        self.queue = Queue.Queue()
 
-if __name__ == '__main__':
-    CI = CheckersInterface()
-    if not IDLEtest():
-        CI.master.mainloop()
+        # Set up the GUI part
+        self.gui = GuiPart(master, self.queue)
+
+        # Set up the thread to do asynchronous I/O
+        # More threads can also be created and used, if necessary
+        self.running = 1
+        self.thread1 = threading.Thread(target=self.workerThread1)
+        self.thread1.start()
+
+        # Start the periodic call in the GUI to check if the queue contains
+        # anything
+        self.periodicCall()
+
+    def periodicCall(self):
+        """
+        Check every 200 ms if there is something new in the queue.
+        """
+        self.gui.processIncoming()
+        if not self.running:
+            # This is the brutal stop of the system. You may want to do
+            # some cleanup before actually shutting it down.
+            import sys
+            sys.exit(1)
+        self.master.after(200, self.periodicCall)
+
+    def workerThread1(self):
+        """
+        This is where we handle the asynchronous I/O. For example, it may be
+        a 'select(  )'. One important thing to remember is that the thread has
+        to yield control pretty regularly, by select or otherwise.
+        """
+        while self.running:
+            # To simulate asynchronous I/O, we create a random number at
+            # random intervals. Replace the following two lines with the real
+            # thing.
+            time.sleep(rand.random() * 1.5)
+            msg = rand.random()
+            self.queue.put(msg)
+
+    def endApplication(self):
+        self.running = 0
+
+rand = random.Random()
+root = Tk()
+
+client = ThreadedClient(root)
+root.mainloop()
