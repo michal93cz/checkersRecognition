@@ -169,7 +169,8 @@ class GuiPart:
         if self.DEBUG_BIG_THINGS:
             print "self.pieces: ", self.pieces
 
-        self.MoveLoop()
+        self.setup_move()
+        # self.MoveLoop()
 
     def MoveLoop(self):
         """This is the central function. It's main portion is a loop.  The loop is
@@ -746,13 +747,55 @@ class GuiPart:
 
     def processIncoming(self):
         """Handle all messages currently in the queue, if any."""
+
         while self.queue.qsize():
             try:
-                msg = self.queue.get(0)
+                square_from, piece, square_to = self.queue.get(0)
                 # Check contents of message and do whatever is needed. As a
                 # simple test, print it (in real life, you would
                 # suitably update the GUI's display in a richer fashion).
-                print msg
+                self.set_piece(square_from, piece)
+                self.set_square(square_to)
+
+                if not self.GameDone():
+                    if self.end_now:
+                        break
+                    self.master.update()
+                    if self.got_move:
+                        if not self.check_move():
+                            # whenever a move is gotten which is correct, do this stuff
+                            self.do_move()
+                            self.cleanup_move(2)
+                            self.setup_move()
+                            self.cleanup_move(3)
+                        # whenever a move is goten, do this stuff
+                        self.cleanup_move(1)
+                if self.GameDone() == 2:
+                    self.c.create_text(int(self.c.cget("height")) / 2, \
+                                       int(self.c.cget("width")) / 2, \
+                                       text="Black Won!!!", fill="black", \
+                                       font=("", "20", ""), tag="win_text")
+                if self.GameDone() == 1:
+                    self.c.create_text(int(self.c.cget("height")) / 2, \
+                                       int(self.c.cget("width")) / 2, \
+                                       text="Red Won!!!", fill="black", \
+                                       font=("", "23", ""), tag="win_text")
+                    self.c.create_text(int(self.c.cget("height")) / 2, \
+                                       int(self.c.cget("width")) / 2, \
+                                       text="Red Won!!!", fill="red", \
+                                       font=("", "20", ""), tag="win_text")
+                    # import time
+                    # start=time.time()
+                    # while start-time.time() < 3:
+                    #    self.master.update()
+
+                # if self.AnotherGame():
+                #     self.begin_new_game()
+                # else:
+                #     self.master.destroy()
+
+                print square_to
+
             except Queue.Empty:
                 # just on general principles, although we don't
                 # expect this branch to be taken in this case
@@ -810,8 +853,8 @@ class ThreadedClient:
             # To simulate asynchronous I/O, we create a random number at
             # random intervals. Replace the following two lines with the real
             # thing.
-            time.sleep(rand.random() * 1.5)
-            msg = rand.random()
+            time.sleep(2)
+            msg = (42, 86, (47, ))
             self.queue.put(msg)
 
     def endApplication(self):
