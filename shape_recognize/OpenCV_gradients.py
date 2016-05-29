@@ -33,7 +33,7 @@ objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 
 
-img = cv2.imread('../pictures/artificial_light/position4.jpg')
+img = cv2.imread('../pictures/day_light/position4.jpg')
 
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -78,6 +78,7 @@ if ret == True:
     img = cv2.multiply(img, np.array([1.1]))
     img = cv2.medianBlur(img, 7)
     table = Sampler.check_colors(img, result)
+    print(Sampler.strarr_to_intarr(table))
     image = Repr.create_representation(table)
     image_cv = (np.array(image))[:, :, ::-1].copy()
     cv2.imshow('representation', image_cv)

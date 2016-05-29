@@ -1,4 +1,5 @@
 from prettytable import PrettyTable
+import copy
 
 # Would be better to change it to a non-static class
 #***************************** SAMPLER CLASS *********************************
@@ -87,5 +88,25 @@ class Sampler:
         array = array.astype(int)
         result = max([abs(array[2] - array[1]), abs(array[2] - array[0]), abs(array[1] - array[0])])
         return result
+
+    @staticmethod
+    def strarr_to_intarr(array):
+        int_array = copy.deepcopy(array)
+        arr = []
+        verse = []
+        for row in int_array:
+            for element in row:
+                square = {
+                    'white': 0,
+                    'blue': 1,
+                    'green': 2,
+                    'black': None
+                }[element]
+                if square is not None:
+                    verse.append(square)
+            arr.append(verse)
+            verse = []
+        return arr
+
 
 # ************************************ /SAMPLER CLASS **********************************
