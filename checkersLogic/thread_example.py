@@ -424,8 +424,7 @@ class GuiPart:
 
         # distence checker
         if abs(vtr[0]) != self.SQUARESIZE or abs(vtr[1]) != self.SQUARESIZE:
-            if self.DEBUG:
-                print "Too far!"
+            self.show_message("Too far!")
             return 4
 
         # square emptiness checker
@@ -849,13 +848,31 @@ class ThreadedClient:
         a 'select(  )'. One important thing to remember is that the thread has
         to yield control pretty regularly, by select or otherwise.
         """
+
+        self.counter = 0
+
         while self.running:
             # To simulate asynchronous I/O, we create a random number at
             # random intervals. Replace the following two lines with the real
             # thing.
-            time.sleep(2)
-            msg = (42, 86, (47, ))
-            self.queue.put(msg)
+
+            time.sleep(4)
+            self.counter += 1
+            if self.counter == 1:
+                move = (42, 86, (47,))
+            if self.counter == 2:
+                move = (43, 87, (47,))
+            if self.counter == 3:
+                move = (55, 67, (48,))
+            if self.counter == 4:
+                move = (55, 67, (51,))
+            if self.counter == 5:
+                move = (41, 85, (45,))
+            if self.counter == 6:
+                move = (51, 67, (48,))
+            if self.counter == 7:
+                move = (51, 67, (42,))
+            self.queue.put(move)
 
     def endApplication(self):
         self.running = 0
