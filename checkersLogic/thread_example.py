@@ -5,6 +5,7 @@ import random
 import Queue
 import string
 
+
 class GuiPart:
     DEBUG = 1
     DEBUG_BIG_THINGS = 1
@@ -22,6 +23,8 @@ class GuiPart:
 
         self.counter = 0
 
+        global ACCEPT_MOVE
+
         self.piece_offset = (self.SQUARESIZE - self.PIECE_DIAMETER)  # calulation saver
 
         if master == None:  # master creator
@@ -35,10 +38,7 @@ class GuiPart:
         # self.master.bind("t", self.erace_temporary)
         # /|\
         # |  there are no temporary objects
-        self.master.bind("n", self.show_numbers_toggle)
         self.master.bind("[", self.go_to_move)
-        self.master.bind("a", self.toggle_add_mode)
-        self.master.bind("r", self.toggle_remove_mode)
         # self.master.bind("d", self.do_move_one)
         self.make_display()
 
@@ -46,14 +46,14 @@ class GuiPart:
 
     def make_display(self):
         """This function will create the Canvas for the board, and then the board.
-        The variables required by this function are:
+        The variables requiblue by this function are:
             self.master, self.SQUARESIZE."""
         foo = self.SQUARESIZE * 8  # calculation saver
         self.c = Canvas(self.master, height=foo, width=foo)
         self.message = Label(self.master, text="", bd=2, relief=RAISED, \
                              font=("", "10", ""))
-        self.make_checker_squares(0, 7, "bisque")
-        self.make_checker_squares(1, 8, "green3", "squares")
+        self.make_checker_squares(0, 7, "black")
+        self.make_checker_squares(1, 8, "white", "squares")
 
         history_scroll = Scrollbar(self.master)
         self.history_display = Listbox(self.master, yscrollcommand=history_scroll.set)
@@ -71,60 +71,6 @@ class GuiPart:
             if self.c.type(baz) == "rectangle":
                 self.upper_corner_square = baz
 
-    def toggle_add_mode(self, unused):
-        """This will put the game in add mode.  In this mode, you can add red
-        pieces with a left click and black pieces with a right click."""
-        if self.add_mode:
-            self.add_mode = 0
-            self.master.unbind("<1>")
-            self.master.unbind("<2>")
-
-            self.c.tag_bind("pieces", "<1>", self.get_piece_click)
-            self.c.tag_bind("squares", "<1>", self.get_square_click)
-        else:
-            self.add_mode = 1
-            self.master.bind("<1>", self.make_a_piece)
-            self.master.bind("<2>", self.make_a_piece)
-
-            self.remove_mode = 0
-            self.c.tag_unbind("pieces", "<1>")
-            self.c.tag_unbind("squares", "<1>")
-
-    def toggle_remove_mode(self, unused):
-        if self.remove_mode:
-            self.remove_mode = 0
-            self.master.unbind("<1>")
-
-            self.c.tag_bind("pieces", "<1>", self.get_piece_click)
-            self.c.tag_bind("squares", "<1>", self.get_square_click)
-        else:
-            self.remove_mode = 1
-            self.master.bind("<1>", self.remove_piece)
-
-            self.add_mode = 0
-            self.master.unbind("<2>")
-            self.c.tag_unbind("pieces", "<1>")
-            self.c.tag_unbind("squares", "<1>")
-
-    def show_numbers_toggle(self, unused=None):
-        """This shows little white numbers in the corner of each square"""
-        if self.c.type("numbers") == "text":
-            self.c.delete("numbers")
-        else:
-            number = 1
-            start = self.SQUARESIZE + 10;
-            stop = self.SQUARESIZE * 8
-            for y in range(10, self.SQUARESIZE * 8, self.SQUARESIZE):
-                for x in range(start, stop, self.SQUARESIZE * 2):
-                    self.c.create_text(x, y, text=str(number), fill="white", tags="numbers")
-                    number = number + 1
-                if start == self.SQUARESIZE + 10:
-                    start = 10;
-                    stop = self.SQUARESIZE * 7
-                else:
-                    if start == 10:
-                        start = self.SQUARESIZE + 10;
-                        stop = self.SQUARESIZE * 8
 
     def begin_new_game(self):
         """This is the function that begins a new game.  It will be run whenever
@@ -138,7 +84,7 @@ class GuiPart:
         # variable clearing
         self.c.itemconfig("squares", width=1, outline="black")
         self.quux = None  # temporary storage
-        self.pieces = {"black": [], "red": []}  # first list is black's pieces, then red's pieces.
+        self.pieces = {"green": [], "blue": []}  # first list is green's pieces, then blue's pieces.
         self.piece = None
         self.piece_square = None
         self.square = ()
@@ -158,63 +104,18 @@ class GuiPart:
         self.add_mode = 0
         self.remove_mode = 0
 
-        self.make_pieces("black", self.DELAY)
-        self.make_pieces("red", self.DELAY)
+        self.make_pieces("green", self.DELAY)
+        self.make_pieces("blue", self.DELAY)
 
         self.c.tag_bind("pieces", "<1>", self.get_piece_click)
         self.c.tag_bind("squares", "<1>", self.get_square_click)
 
-        self.moving = "black"  # reversed since setup_move will switch it.
+        self.moving = "green"  # reversed since setup_move will switch it.
 
         if self.DEBUG_BIG_THINGS:
             print "self.pieces: ", self.pieces
 
         self.setup_move()
-        # self.MoveLoop()
-
-    def MoveLoop(self):
-        """This is the central function. It's main portion is a loop.  The loop is
-        terminated by self.GameDone returning true.  Within the loop it waits for
-        a move to be gotten, then calls self.check_move, and self.do_move.  Once
-        the loop terminates, MoveLoop calls self.AnotherGame and deals with the
-        response."""
-        self.setup_move()
-        while not self.GameDone():
-            if self.end_now:
-                break
-            self.master.update()
-            if self.got_move:
-                if not self.check_move():
-                    # whenever a move is gotten which is correct, do this stuff
-                    self.do_move()
-                    self.cleanup_move(2)
-                    self.setup_move()
-                    self.cleanup_move(3)
-                # whenever a move is goten, do this stuff
-                self.cleanup_move(1)
-        if self.GameDone() == 2:
-            self.c.create_text(int(self.c.cget("height")) / 2, \
-                               int(self.c.cget("width")) / 2, \
-                               text="Black Won!!!", fill="black", \
-                               font=("", "20", ""), tag="win_text")
-        if self.GameDone() == 1:
-            self.c.create_text(int(self.c.cget("height")) / 2, \
-                               int(self.c.cget("width")) / 2, \
-                               text="Red Won!!!", fill="black", \
-                               font=("", "23", ""), tag="win_text")
-            self.c.create_text(int(self.c.cget("height")) / 2, \
-                               int(self.c.cget("width")) / 2, \
-                               text="Red Won!!!", fill="red", \
-                               font=("", "20", ""), tag="win_text")
-            # import time
-            # start=time.time()
-            # while start-time.time() < 3:
-            #    self.master.update()
-
-        if self.AnotherGame():
-            self.begin_new_game()
-        else:
-            self.master.destroy()
 
             # ++++++++++++++++++++++++++++++++++++++++more detailed functions+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -234,7 +135,7 @@ class GuiPart:
             self.square = ()
 
     def setup_move(self):
-        """This does the setup required of a move.  It checks for kings to be
+        """This does the setup requiblue of a move.  It checks for kings to be
         crowned, and checks for double jumps with the check_for_jumps function.
         If there are no double jumps, it toggles self.moving, sets the
         history, and checks for jumps again."""
@@ -249,16 +150,16 @@ class GuiPart:
         for piece in self.pieces[self.moving]:
             if self.DEBUG_BIG_THINGS:
                 print "self.c.coords(piece): ", self.c.coords(piece)
-            if self.moving == "black":
+            if self.moving == "green":
                 if self.c.coords(piece)[1] == self.piece_offset:
                     if self.DEBUG:
-                        print "black kings!"
+                        print "green kings!"
                     not_crowning = 0
                     self.c.itemconfig(piece, outline="gold2", width=3)
-            if self.moving == "red":
+            if self.moving == "blue":
                 if self.c.coords(piece)[1] == (self.SQUARESIZE * 7) + self.piece_offset:
                     if self.DEBUG:
-                        print "red kings!"
+                        print "blue kings!"
                     not_crowning = 0
                     self.c.itemconfig(piece, outline="gold2", width=3)
 
@@ -277,18 +178,18 @@ class GuiPart:
             # this creates a new turn.
             self.count = self.count + 1
             self.history.append([])
-            for foo in self.pieces["red"] + self.pieces["black"]:
+            for foo in self.pieces["blue"] + self.pieces["green"]:
                 self.history[-1].append((self.c.itemcget(foo, "fill"), self.c.coords(foo), \
                                          self.c.itemcget(foo, "width")))
             if self.DEBUG_BIG_THINGS:
                 print "self.history: ", self.history
             self.jumps = [[], []]
-            if self.moving == "black":
-                self.moving = "red"
-                self.message.config(text="Red's move!", fg="red")
+            if self.moving == "green":
+                self.moving = "blue"
+                self.message.config(text="blue's move!", fg="blue")
             else:
-                self.moving = "black"
-                self.message.config(text="Black's move!", fg="black")
+                self.moving = "green"
+                self.message.config(text="green's move!", fg="green")
             if self.DEBUG:
                 print "changed"
             self.check_for_jumps()
@@ -304,7 +205,7 @@ class GuiPart:
             pass;
             print "got_piece_click"
         if self.piece != None:
-            self.c.itemconfig(self.piece_square, outline="black", width=1)
+            self.c.itemconfig(self.piece_square, outline="green", width=1)
         try:
             self.piece_square, self.piece = self.c.find_overlapping(event.x, event.y, event.x, event.y)
             print "self.piece_square, self.piece: ", self.c.find_overlapping(event.x, event.y, event.x, event.y)
@@ -374,7 +275,7 @@ class GuiPart:
             self.got_move = 1
 
     def check_move(self):
-        """This function does all the verifiying required for a move.  It checks
+        """This function does all the verifiying requiblue for a move.  It checks
         for errors in the get_piece and get_square functions that cause no move
         to be reported. It then calulates some variables used in later checks.
         Then it checks if the move is a jump(if there are any jumps).  It then
@@ -411,15 +312,17 @@ class GuiPart:
 
         # movement direction checker
         if self.c.itemcget(self.piece, "outline") != "gold2":
-            if self.moving == "black":
+            if self.moving == "green":
                 if vtr[1] > 0:
                     if self.DEBUG:
-                        print "wrong way, black!"
+                        self.show_message("wrong way, green!")
+                        print "wrong way, green!"
                     return 3
             else:
                 if vtr[1] < 0:
                     if self.DEBUG:
-                        print "wrong way, red!"
+                        self.show_message("wrong way, blue!")
+                        print "wrong way, blue!"
                     return 3
 
         # distence checker
@@ -464,12 +367,12 @@ class GuiPart:
 
     def GameDone(self):
         """This is the win checker.  It reports 0 if the game has not ended,
-        2 for a win by red, 1 for a win by black, and 3 for a draw."""
+        2 for a win by blue, 1 for a win by green, and 3 for a draw."""
         if self.DEBUG_PRINT_FUNCTIONS:
             pass;  # print "GameDone"
-        if self.pieces["black"] == []:
+        if self.pieces["green"] == []:
             return 1
-        if self.pieces["red"] == []:
+        if self.pieces["blue"] == []:
             return 2
         return 0
 
@@ -482,7 +385,7 @@ class GuiPart:
             pass;  # print "AnotherGame"
         # self.c.create_rectangle(0,0, int(self.c.cget('width')), \
         #                                 int(self.c.cget('height')), \
-        #                                 stipple='gray50', fill='black',\
+        #                                 stipple='gray50', fill='green',\
         #                                 tag='end_game_overlay')
         self.message.config(text="Do you want another game?", fg="gray25")
 
@@ -524,16 +427,16 @@ class GuiPart:
             return 1
 
         self.c.delete("pieces")
-        self.pieces["black"] = []
-        self.pieces["red"] = []
+        self.pieces["green"] = []
+        self.pieces["blue"] = []
         for foo in self.history[move_number]:
             self.pieces[foo[0]].append(apply(self.c.create_oval, foo[1], {"fill": foo[0], "tag": "pieces"}))
             if foo[2] == 3:
                 self.c.itemconfig(self.pieces[foo[0]][-1], width=3, outline="gold")
         if move_number % 2 == 0:  # not reversed since setup_move will flip them _twice_.
-            self.moving = "black"
+            self.moving = "green"
         else:
-            self.moving = "red"
+            self.moving = "blue"
         self.cleanup_move(1)
         self.cleanup_move(2)
         self.setup_move()
@@ -550,9 +453,9 @@ class GuiPart:
         pass
         if self.DEBUG_PRINT_FUNCTIONS:
             print "check_for_jumps"
-        if self.moving == "red":
+        if self.moving == "blue":
             baz_normal = [(2 * self.SQUARESIZE, 2 * self.SQUARESIZE), (-2 * self.SQUARESIZE, 2 * self.SQUARESIZE)]
-        if self.moving == "black":
+        if self.moving == "green":
             baz_normal = [(2 * self.SQUARESIZE, -2 * self.SQUARESIZE), (-2 * self.SQUARESIZE, -2 * self.SQUARESIZE)]
         baz = baz_normal
         for piece in self.pieces[self.moving]:
@@ -620,7 +523,7 @@ class GuiPart:
         """This function will create a checkerboard of squares, of the color given, with the tags given.
         The start and stop arguments are a technical way of specifiying which half of the checkerboard is
         to be created.
-            The variables required by this function are:
+            The variables requiblue by this function are:
                 self.c(a Canvas), self.SQUARESIZE, """
         ##        if self.DEBUG_BIG_THINGS:
         ##            print color
@@ -643,16 +546,16 @@ class GuiPart:
 
     def make_pieces(self, color, delay):
         """This function will make, and place in standard starting position, all the pieces for a specified
-        color.  The color can be either "black" or "red".  If it is 0, they are placed on the top half of the board, if it is 1, on the bottom.
+        color.  The color can be either "green" or "blue".  If it is 0, they are placed on the top half of the board, if it is 1, on the bottom.
             The pieces are appended to the list variable corosponding to the color given, and they are given
             the tag "pieces".  The delay argument sets a delay(duh!), the unit
             is about 885 per sec.
-            The variables required by this function are:
+            The variables requiblue by this function are:
                 self.pieces(a dictionary of two lists, one for each side), self.c(a Canvas),
                 self.SQUARESIZE, self.piece_offset"""
 
         side = self.pieces[color]
-        if color == "red":
+        if color == "blue":
             start = 1;
             stop = 8
             start2 = 0;
@@ -684,9 +587,9 @@ class GuiPart:
 
     def make_a_piece(self, event):
         if event.num == 1:
-            color = 'black'
+            color = 'green'
         else:
-            color = 'red'
+            color = 'blue'
         if len(self.c.find_overlapping(event.x, event.y, event.x, event.y)) == 1:
             cords = self.c.coords(self.c.find_overlapping(event.x, event.y, event.x, event.y))
             self.pieces[color].append(self.c.create_oval(cords[0] + self.piece_offset, \
@@ -737,9 +640,9 @@ class GuiPart:
             piece = piece[1]
             self.c.delete(piece)
             try:
-                self.pieces["red"].remove(piece)
+                self.pieces["blue"].remove(piece)
             except:
-                self.pieces["black"].remove(piece)
+                self.pieces["green"].remove(piece)
         else:
             if self.DEBUG:
                 print "Not a piece!"
@@ -749,6 +652,7 @@ class GuiPart:
 
         while self.queue.qsize():
             try:
+                print "Accept move: ", ACCEPT_MOVE
                 square_from, piece, square_to = self.queue.get(0)
                 # Check contents of message and do whatever is needed. As a
                 # simple test, print it (in real life, you would
@@ -762,6 +666,7 @@ class GuiPart:
                     self.master.update()
                     if self.got_move:
                         if not self.check_move():
+                            ACCEPT_MOVE = 1
                             # whenever a move is gotten which is correct, do this stuff
                             self.do_move()
                             self.cleanup_move(2)
@@ -772,16 +677,16 @@ class GuiPart:
                 if self.GameDone() == 2:
                     self.c.create_text(int(self.c.cget("height")) / 2, \
                                        int(self.c.cget("width")) / 2, \
-                                       text="Black Won!!!", fill="black", \
+                                       text="green Won!!!", fill="red", \
                                        font=("", "20", ""), tag="win_text")
                 if self.GameDone() == 1:
                     self.c.create_text(int(self.c.cget("height")) / 2, \
                                        int(self.c.cget("width")) / 2, \
-                                       text="Red Won!!!", fill="black", \
+                                       text="blue Won!!!", fill="red", \
                                        font=("", "23", ""), tag="win_text")
                     self.c.create_text(int(self.c.cget("height")) / 2, \
                                        int(self.c.cget("width")) / 2, \
-                                       text="Red Won!!!", fill="red", \
+                                       text="blue Won!!!", fill="red", \
                                        font=("", "20", ""), tag="win_text")
                     # import time
                     # start=time.time()
@@ -814,6 +719,15 @@ class ThreadedClient:
         """
         self.master = master
 
+        self.main_checkers_table = [[33, 77], [34, 78], [35, 79], [36, 80],
+                                    [37, 81], [38, 82], [39, 83], [40, 84],
+                                    [41, 85], [42, 86], [43, 87], [44, 88],
+                                    [45, 0], [46, 0], [47, 0], [48, 0],
+                                    [49, 0], [50, 0], [51, 0], [52, 0],
+                                    [53, 65], [54, 66], [55, 67], [56, 68],
+                                    [57, 69], [58, 70], [59, 71], [60, 72],
+                                    [61, 73], [62, 74], [63, 75], [64, 76]]
+
         # Create the queue
         self.queue = Queue.Queue()
 
@@ -829,6 +743,38 @@ class ThreadedClient:
         # Start the periodic call in the GUI to check if the queue contains
         # anything
         self.periodicCall()
+
+    def checkTables(self, new_table):
+        count = 0
+        squares_from = []
+        squares_to = []
+        square_from = 0
+        square_to = 0
+        piece = 0
+        piece_remove = []
+        for old_square, new_square in zip(self.main_checkers_table, new_table):
+            if old_square[1] <> new_square[1]:
+                if new_square[1] == 0:
+                    piece_remove.append(old_square[1])
+                    squares_from.append([old_square[0], old_square[1]])
+                if old_square[1] == 0:
+                    squares_to.append([new_square[0], new_square[1]])
+                count += 1
+
+        if count <= 3 and count > 1:
+            for move in squares_from:
+                if move[1] == squares_to[0][1]:
+                    square_from = move[0]
+                    square_to = squares_to[0][0]
+                    piece = move[1]
+                    piece_remove.remove(piece)
+
+        move = (square_from, piece, (square_to,))
+        print count, move, piece_remove
+
+        self.queue.put(move)
+
+        self.main_checkers_table = new_table
 
     def periodicCall(self):
         """
@@ -859,20 +805,43 @@ class ThreadedClient:
             time.sleep(4)
             self.counter += 1
             if self.counter == 1:
-                move = (42, 86, (47,))
+                new_table = [[33, 77], [34, 78], [35, 79], [36, 80],
+                             [37, 81], [38, 82], [39, 83], [40, 84],
+                             [41, 85], [42, 86], [43, 0], [44, 88],
+                             [45, 0], [46, 0], [47, 87], [48, 0],
+                             [49, 0], [50, 0], [51, 0], [52, 0],
+                             [53, 65], [54, 66], [55, 67], [56, 68],
+                             [57, 69], [58, 70], [59, 71], [60, 72],
+                             [61, 73], [62, 74], [63, 75], [64, 76]]
             if self.counter == 2:
-                move = (43, 87, (47,))
+                new_table = [[33, 77], [34, 78], [35, 79], [36, 80],
+                             [37, 81], [38, 82], [39, 83], [40, 84],
+                             [41, 85], [42, 86], [43, 0], [44, 88],
+                             [45, 0], [46, 0], [47, 87], [48, 0],
+                             [49, 0], [50, 67], [51, 0], [52, 0],
+                             [53, 65], [54, 66], [55, 0], [56, 68],
+                             [57, 69], [58, 70], [59, 71], [60, 72],
+                             [61, 73], [62, 74], [63, 75], [64, 76]]
             if self.counter == 3:
-                move = (55, 67, (48,))
+                new_table = [[33, 77], [34, 78], [35, 79], [36, 80],
+                             [37, 81], [38, 82], [39, 83], [40, 84],
+                             [41, 0], [42, 86], [43, 0], [44, 88],
+                             [45, 85], [46, 0], [47, 87], [48, 0],
+                             [49, 0], [50, 67], [51, 0], [52, 0],
+                             [53, 65], [54, 66], [55, 0], [56, 68],
+                             [57, 69], [58, 70], [59, 71], [60, 72],
+                             [61, 73], [62, 74], [63, 75], [64, 76]]
             if self.counter == 4:
-                move = (55, 67, (51,))
-            if self.counter == 5:
-                move = (41, 85, (45,))
-            if self.counter == 6:
-                move = (51, 67, (48,))
-            if self.counter == 7:
-                move = (51, 67, (42,))
-            self.queue.put(move)
+                new_table = [[33, 77], [34, 78], [35, 79], [36, 80],
+                             [37, 81], [38, 82], [39, 83], [40, 84],
+                             [41, 0], [42, 86], [43, 67], [44, 88],
+                             [45, 85], [46, 0], [47, 87], [48, 0],
+                             [49, 0], [50, 0], [51, 0], [52, 0],
+                             [53, 65], [54, 66], [55, 0], [56, 68],
+                             [57, 69], [58, 70], [59, 71], [60, 72],
+                             [61, 73], [62, 74], [63, 75], [64, 76]]
+
+            self.checkTables(new_table)
 
     def endApplication(self):
         self.running = 0
