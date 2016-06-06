@@ -139,8 +139,6 @@ imgpoints = [] # 2d points in image plane.
 
 Sampler.debug = 0
 img = cv2.imread('../pictures/move_test/position8_1.jpg')
-path1 = '../pictures/move_test/position2.jpg'
-path2 = '../pictures/move_test/position3.jpg'
 
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -152,7 +150,18 @@ mask = cv2.inRange(hsv, lower_blue, upper_blue)
 map_curr = starting_map()
 map_new = starting_map()
 
+path1 = '../pictures/move_test/position1.jpg'
+path2 = '../pictures/move_test/position2.jpg'
+print(map_curr)
+
 maps = check_move(path1, path2, map_curr, map_new)                              #Dziwne przypisanie bo nie zwojowalem wewnatrz funkcji zmiany zawartosci listy podanej jako parametr
+map_curr = maps[0]
+map_new = maps[1]
+
+print(map_curr)
+path1 = '../pictures/move_test/position2.jpg'
+path2 = '../pictures/move_test/position3.jpg'
+maps = check_move(path1, path2, map_curr, map_new)                             
 map_curr = maps[0]
 map_new = maps[1]
 
