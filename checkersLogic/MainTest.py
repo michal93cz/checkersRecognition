@@ -1030,19 +1030,23 @@ class ThreadedClient:
                         square_to = squares_to[0][0]
                         piece = move[1]
                         piece_remove.remove(piece)
-            if count == 3:
+                move = (square_from, piece, (square_to,))
+                print count, move, piece_remove
+                self.queue.put(move)
+
+            if count == 3 and self.gui.jumps:
                 for move in squares_from:
                     if move[1] == squares_to[0][1]:
                         square_from = move[0]
                         square_to = squares_to[0][0]
                         piece = move[1]
                         piece_remove.remove(piece)
-
-            move = (square_from, piece, (square_to,))
-            print count, move, piece_remove
-
-            self.queue.put(move)
-
+                move = (square_from, piece, (square_to,))
+                print count, move, piece_remove
+                self.queue.put(move)
+            if count == 3 and not (self.gui.jumps):
+                self.gui.set_accept_move(0)
+                self.gui.set_check_complete(1)
             while self.gui.get_check_complete() == 0:
                 print 'wait for complete'
                 time.sleep(0.5)
