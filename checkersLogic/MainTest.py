@@ -909,8 +909,6 @@ class ThreadedClient:
     def get_nth_element_of_map(i, array):
         return array[i + 32][1]
 
-
-
     def checkTables(self, new_table):
         count = 0
         squares_from = []
@@ -961,7 +959,10 @@ class ThreadedClient:
 
             self.gui.set_check_complete(0)
         else:
-            self.gui.show_message('Get back to this state', 1)
+            if count != 0:
+                self.gui.show_message('Get back to this state', 1)
+            else:
+                pass
 
     def periodicCall(self):
         """

@@ -818,7 +818,10 @@ class ThreadedClient:
 
             self.gui.set_check_complete(0)
         else:
-            self.gui.show_message('Get back to this state', 1)
+            if count != 0:
+                self.gui.show_message('Get back to this state', 1)
+            else:
+                pass
 
     def periodicCall(self):
         """
