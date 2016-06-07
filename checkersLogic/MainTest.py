@@ -1006,6 +1006,7 @@ class ThreadedClient:
         return array[i + 32][1]
 
     def checkTables(self, new_table):
+        print 'Wywolanie chackTables'
         count = 0
         squares_from = []
         squares_to = []
@@ -1034,7 +1035,7 @@ class ThreadedClient:
                 print count, move, piece_remove
                 self.queue.put(move)
 
-            if count == 3 and self.gui.jumps:
+            if count == 3 and self.gui.jumps[0]:
                 for move in squares_from:
                     if move[1] == squares_to[0][1]:
                         square_from = move[0]
@@ -1044,12 +1045,12 @@ class ThreadedClient:
                 move = (square_from, piece, (square_to,))
                 print count, move, piece_remove
                 self.queue.put(move)
-            if count == 3 and not (self.gui.jumps):
+            if count == 3 and not (self.gui.jumps[0]):
                 self.gui.set_accept_move(0)
                 self.gui.set_check_complete(1)
             while self.gui.get_check_complete() == 0:
                 print 'wait for complete'
-                time.sleep(0.5)
+                time.sleep(0.1)
             if self.gui.get_accept_move():
                 print 'Accept move is 1'
                 self.main_checkers_table = new_table
@@ -1084,6 +1085,7 @@ class ThreadedClient:
         """
 
         self.counter = 0
+        count = 0
 
         # pierwszy odczyt z kamery
         ret, img = self.cap.read()
@@ -1110,7 +1112,7 @@ class ThreadedClient:
                 # If found, add object points, image points (after refining them)
             if ret == True:
 
-                time.sleep(1)
+                time.sleep(3)
                 normal = cv2.cvtColor(img, cv2.COLORMAP_BONE)
                 #scipy.misc.imsave('new.jpg', normal)
                 #cv2.imwrite('new.jpg',normal)
@@ -1118,13 +1120,21 @@ class ThreadedClient:
                 path2 = normal #cv2.imread('new.jpg')
                 maps = self.check_move(path1, path2, map_curr, map_new)                              #Dziwne przypisanie bo nie zwojowalem wewnatrz funkcji zmiany zawartosci listy podanej jako parametr
                 #path2 = scipy.misc.imread('new.jpg')
+
                 if maps is not None:
+                    if self.gui.jumps[0]:
+                        count += 1
                     path1 = path2
                     map_curr = maps[0]
                     map_new = maps[1]
-                #print(map_curr)
+                    if count == 2 and self.gui.jumps[0]:
+                        count = 0
+                        self.checkTables(map_curr)
+                    if not (self.gui.jumps[0]):
+                        self.checkTables(map_curr)
+
+
                 print(map_curr)
-                self.checkTables(map_curr)
                 cv2.waitKey(delay=100)
 
 
