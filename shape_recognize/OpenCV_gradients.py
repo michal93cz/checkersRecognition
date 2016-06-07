@@ -82,18 +82,24 @@ def check_move(path1, path2, map_current, map_new):
             if state1[i][j] != state2[i][j]:
                 difference.append([i, j, state1[i][j], state2[i][j]])
 
-    k = None
-    if len(difference) > 2:                                                                                             #if difference is more than 2 then the change is not valid
-        print("State change not possible, number of tiles that do not match: " + len(null_tile))
-    elif len(difference) == 2:
-        if difference[0][3] == 'white':
-            null_tile = difference[0]
-            active_tile = difference[1]
-            k = -1
-        else:
-            null_tile = difference[1]
-            active_tile = difference[0]
-            k = 1
+    try:
+        k = None
+        if len(difference) > 2:                                                                                             #if difference is more than 2 then the change is not valid
+            print("State change not possible, number of tiles that do not match: " + len(null_tile))
+        elif len(difference) == 2:
+            if difference[0][3] == 'white':
+                null_tile = difference[0]
+                active_tile = difference[1]
+                k = -1
+            else:
+                null_tile = difference[1]
+                active_tile = difference[0]
+                k = 1
+        elif len(difference) == 0:
+            return
+    except Exception as e:
+        print('Inaccesible state! Return to the last acceptable')
+        return
 
         map_new[null_tile[0] * 4 + null_tile[1]][1] = 0
         print("zmieniam", map_new[active_tile[0] * 4 + null_tile[1]][0], 'z', map_new[active_tile[0] * 4 + null_tile[1]][1], 'na ',map_current[null_tile[0] * 4 + null_tile[1] + k][1])
@@ -150,20 +156,22 @@ mask = cv2.inRange(hsv, lower_blue, upper_blue)
 map_curr = starting_map()
 map_new = starting_map()
 
-path1 = '../pictures/move_test/position1.jpg'
+path1 = '../pictures/move_test/position2.jpg'
 path2 = '../pictures/move_test/position2.jpg'
 print(map_curr)
 
 maps = check_move(path1, path2, map_curr, map_new)                              #Dziwne przypisanie bo nie zwojowalem wewnatrz funkcji zmiany zawartosci listy podanej jako parametr
-map_curr = maps[0]
-map_new = maps[1]
+if maps is not None:
+    map_curr = maps[0]
+    map_new = maps[1]
 
 print(map_curr)
 path1 = '../pictures/move_test/position2.jpg'
-path2 = '../pictures/move_test/position3.jpg'
-maps = check_move(path1, path2, map_curr, map_new)                             
-map_curr = maps[0]
-map_new = maps[1]
+path2 = '../pictures/move_test/position2.jpg'
+maps = check_move(path1, path2, map_curr, map_new)
+if maps is not None:
+    map_curr = maps[0]
+    map_new = maps[1]
 
 print(map_curr)
 
