@@ -163,9 +163,6 @@ if ret:
 
 while(True):
     #cv2.waitKey(4000)
-    # img = cv2.imread('../pictures/day_light/position1.jpg')
-    # img = cv2.imread('../pictures/day_light/position4.jpg')
-    # img = cv2.medianBlur(img, 7)
     ret, img = cap.read()
 
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
