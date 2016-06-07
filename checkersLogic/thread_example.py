@@ -13,8 +13,10 @@ class GuiPart:
     DELAY = 0  # 885=1 sec.
     SQUARESIZE = 50
     PIECE_DIAMETER = 35
+
     CHECK_COMPLETE = 0
     ACCEPT_MOVE = 0
+    JUMBS = 0
 
     def __init__(self, master, queue):
         self.queue = queue
@@ -56,6 +58,12 @@ class GuiPart:
 
     def set_check_complete(self, value):
         self.CHECK_COMPLETE = value
+
+    def get_jumbs(self):
+        return self.JUMBS
+
+    def set_jumbs(self, value):
+        self.JUMBS = value
 
     def make_display(self):
         """This function will create the Canvas for the board, and then the board.
@@ -777,28 +785,40 @@ class ThreadedClient:
                     squares_to.append([new_square[0], new_square[1]])
                 count += 1
 
-        if count <= 3 and count > 1:
-            for move in squares_from:
-                if move[1] == squares_to[0][1]:
-                    square_from = move[0]
-                    square_to = squares_to[0][0]
-                    piece = move[1]
-                    piece_remove.remove(piece)
+        if count > 1 and count < 4:
+            if count == 2:
+                for move in squares_from:
+                    if move[1] == squares_to[0][1]:
+                        square_from = move[0]
+                        square_to = squares_to[0][0]
+                        piece = move[1]
+                        piece_remove.remove(piece)
+            if count == 3:
+                for move in squares_from:
+                    if move[1] == squares_to[0][1]:
+                        square_from = move[0]
+                        square_to = squares_to[0][0]
+                        piece = move[1]
+                        piece_remove.remove(piece)
 
-        move = (square_from, piece, (square_to,))
-        print count, move, piece_remove
+            move = (square_from, piece, (square_to,))
+            print count, move, piece_remove
 
-        self.queue.put(move)
+            self.queue.put(move)
 
-        while self.gui.get_check_complete() == 0:
-            print 'wait for complete'
-            time.sleep(0.5)
-        if self.gui.get_accept_move():
-            print 'Accept move is 1'
-            self.main_checkers_table = new_table
-            self.gui.set_accept_move(0)
+            while self.gui.get_check_complete() == 0:
+                print 'wait for complete'
+                time.sleep(0.5)
+            if self.gui.get_accept_move():
+                print 'Accept move is 1'
+                self.main_checkers_table = new_table
+                self.gui.set_accept_move(0)
+            else:
+                self.gui.show_message('Get back to this state', 1)
 
-        self.gui.set_check_complete(0)
+            self.gui.set_check_complete(0)
+        else:
+            self.gui.show_message('Get back to this state', 1)
 
     def periodicCall(self):
         """
@@ -868,9 +888,9 @@ class ThreadedClient:
             #zly ruch:
             if self.counter == 5:
                 new_table = [[33, 77], [34, 78], [35, 79], [36, 80],
-                             [37, 81], [38, 82], [39, 83], [40, 84],
+                             [37, 81], [38, 82], [39, 0], [40, 84],
                              [41, 0], [42, 86], [43, 67], [44, 88],
-                             [45, 85], [46, 0], [47, 0], [48, 87],
+                             [45, 85], [46, 0], [47, 87], [48, 0],
                              [49, 0], [50, 0], [51, 0], [52, 0],
                              [53, 65], [54, 66], [55, 0], [56, 68],
                              [57, 69], [58, 70], [59, 71], [60, 72],
