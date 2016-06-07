@@ -69,6 +69,12 @@ def get_image_state(img):
         img = cv2.multiply(img, np.array([1.1]))
         img = cv2.medianBlur(img, 7) #to change orientation if necessary
         str_state_table = Sampler.check_colors(img, result)
+        image = Repr.create_representation(str_state_table)
+        image_cv = (np.array(image))[:, :, ::-1].copy()
+        cv2.imshow('representation', image_cv)
+        cv2.drawChessboardCorners(img, (8,8),result, ret)
+        cv2.imshow('img',img)
+
         return str_state_table
 
 def check_move(path1, path2, map_current, map_new):
@@ -95,14 +101,13 @@ def check_move(path1, path2, map_current, map_new):
             else:
                 null_tile = difference[1]
                 active_tile = difference[0]
-                k = 1
+                k = 0
         elif len(difference) == 0:
             return
     except Exception as e:
         print('Inaccesible state! Return to the last acceptable')
         return
-
-    map_new[null_tile[0] * 4 + null_tile[1]][1] = 0
+    map_new[null_tile[0] * 4 + null_tile[1] + k][1] = 0
     print("zmieniam", map_new[active_tile[0] * 4 + null_tile[1]][0], 'z', map_new[active_tile[0] * 4 + null_tile[1]][1], 'na ',map_current[null_tile[0] * 4 + null_tile[1] + k][1])
     map_new[active_tile[0] * 4 + null_tile[1]][1] = map_current[null_tile[0] * 4 + null_tile[1] + k][1]
     map_current = copy.deepcopy(map_new)            #ONLY if test in logic will prove that it was valid move
@@ -162,7 +167,7 @@ if ret:
     path2 = cv2.imread('old2.jpg')
 
 while(True):
-    #cv2.waitKey(4000)
+    cv2.waitKey(4000)
     ret, img = cap.read()
 
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
@@ -174,7 +179,7 @@ while(True):
         # If found, add object points, image points (after refining them)
     if ret == True:
 
-        cv2.waitKey(1000)
+        time.sleep(1)
         normal = cv2.cvtColor(img, cv2.COLORMAP_BONE)
         #scipy.misc.imsave('new.jpg', normal)
         cv2.imwrite('new.jpg',normal)
@@ -183,6 +188,8 @@ while(True):
         maps = check_move(path1, path2, map_curr, map_new)                              #Dziwne przypisanie bo nie zwojowalem wewnatrz funkcji zmiany zawartosci listy podanej jako parametr
         #path2 = scipy.misc.imread('new.jpg')
         if maps is not None:
+            path1 = path2
+            cv2.imwrite('new.jpg',normal)
             map_curr = maps[0]
             map_new = maps[1]
         print(map_curr)

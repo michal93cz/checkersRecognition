@@ -97,7 +97,7 @@ while(True):
         #analyze points in lattice
         #create representation in RGB
         #RGB to BGR and PIL to cv
-        img = cv2.multiply(img, np.array([1.1]))
+        #img = cv2.multiply(img, np.array([1.1]))
         img = cv2.medianBlur(img, 7)
         table = Sampler.check_colors(img, result)
         image = Repr.create_representation(table)

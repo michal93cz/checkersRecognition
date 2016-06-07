@@ -31,7 +31,7 @@ def first_state_matrix():
     return matrix
 
 def get_image_state(img):
-    img = cv2.imread(img)
+    #img = cv2.imread(img)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -94,14 +94,15 @@ def check_move(path1, path2, map_current, map_new):
             else:
                 null_tile = difference[1]
                 active_tile = difference[0]
-                k = 1
+                k = 0
         elif len(difference) == 0:
             return
     except Exception as e:
         print('Inaccesible state! Return to the last acceptable')
         return
-
-    map_new[null_tile[0] * 4 + null_tile[1]][1] = 0
+    a = null_tile[0] * 4
+    a2 = a + null_tile[1]
+    map_new[null_tile[0] * 4 + null_tile[1] + k][1] = 0
     print("zmieniam", map_new[active_tile[0] * 4 + null_tile[1]][0], 'z', map_new[active_tile[0] * 4 + null_tile[1]][1], 'na ',map_current[null_tile[0] * 4 + null_tile[1] + k][1])
     map_new[active_tile[0] * 4 + null_tile[1]][1] = map_current[null_tile[0] * 4 + null_tile[1] + k][1]
     map_current = copy.deepcopy(map_new)            #ONLY if test in logic will prove that it was valid move
@@ -156,8 +157,8 @@ mask = cv2.inRange(hsv, lower_blue, upper_blue)
 map_curr = starting_map()
 map_new = starting_map()
 
-path1 = '../pictures/move_test/position1.jpg'
-path2 = '../pictures/move_test/position1.jpg'
+path1 = '../pictures/move_test2/1.jpg'
+path2 = '../pictures/move_test/2.jpg'
 print(map_curr)
 
 maps = check_move(path1, path2, map_curr, map_new)                              #Dziwne przypisanie bo nie zwojowalem wewnatrz funkcji zmiany zawartosci listy podanej jako parametr
@@ -166,13 +167,28 @@ if maps is not None:
     map_new = maps[1]
 
 print(map_curr)
-path1 = '../pictures/move_test/position1.jpg'
-path2 = '../pictures/move_test/position1.jpg'
+path1 = '../pictures/move_test/2.jpg'
+path2 = '../pictures/move_test/3.jpg'
 maps = check_move(path1, path2, map_curr, map_new)
 if maps is not None:
     map_curr = maps[0]
     map_new = maps[1]
 
+print(map_curr)
+path1 = '../pictures/move_test/3.jpg'
+path2 = '../pictures/move_test/4.jpg'
+maps = check_move(path1, path2, map_curr, map_new)
+if maps is not None:
+    map_curr = maps[0]
+    map_new = maps[1]
+
+print(map_curr)
+path1 = '../pictures/move_test/4.jpg'
+path2 = '../pictures/move_test/5.jpg'
+maps = check_move(path1, path2, map_curr, map_new)
+if maps is not None:
+    map_curr = maps[0]
+    map_new = maps[1]
 print(map_curr)
 
 output = np.array([[]])

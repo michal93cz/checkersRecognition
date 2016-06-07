@@ -1005,34 +1005,39 @@ class ThreadedClient:
             path2 = cv2.imread('old.jpg')
 
         while self.running:
-            cv2.waitKey(4000)
-            ret, img = self.cap.read()
+            time.sleep(1)
+            path1 = '../pictures/move_test/position1.jpg'
+            path2 = '../pictures/move_test/position2.jpg'
+            print(map_curr)
 
-            gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-            # hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            # mask = cv2.inRange(hsv, lower_blue, upper_blue)
+            maps = self.check_move(path1, path2, map_curr, map_new)                              #Dziwne przypisanie bo nie zwojowalem wewnatrz funkcji zmiany zawartosci listy podanej jako parametr
+            if maps is not None:
+                map_curr = maps[0]
+                map_new = maps[1]
 
-            # Find the chess board corners
-            ret, corners = cv2.findChessboardCorners(gray, (7,7), self.output)
-                # If found, add object points, image points (after refining them)
-            if ret == True:
+            print(map_curr)
+            path1 = '../pictures/move_test/position2.jpg'
+            path2 = '../pictures/move_test/position3.jpg'
+            maps = self.check_move(path1, path2, map_curr, map_new)
+            if maps is not None:
+                map_curr = maps[0]
+                map_new = maps[1]
 
-                cv2.waitKey(1000)
-                normal = cv2.cvtColor(img, cv2.COLORMAP_BONE)
-                #scipy.misc.imsave('new.jpg', normal)
-                cv2.imwrite('new.jpg',normal)
-                #path2 = scipy.misc.imread('new.jpg')
-                path2 = cv2.imread('new.jpg')
-                maps = self.check_move(path1, path2, map_curr, map_new)                              #Dziwne przypisanie bo nie zwojowalem wewnatrz funkcji zmiany zawartosci listy podanej jako parametr
-                #path2 = scipy.misc.imread('new.jpg')
-                if maps is not None:
-                    path1 = path2
-                    map_curr = maps[0]
-                    map_new = maps[1]
-                #print(map_curr)
-                print(map_curr)
-                #self.checkTables(map_new)
-                cv2.waitKey(delay=100)
+            print(map_curr)
+            path1 = '../pictures/move_test/position3.jpg'
+            path2 = '../pictures/move_test/position3_4.jpg'
+            maps = self.check_move(path1, path2, map_curr, map_new)
+            if maps is not None:
+                map_curr = maps[0]
+                map_new = maps[1]
+
+            print(map_curr)
+            path1 = '../pictures/move_test/position3_4.jpg'
+            path2 = '../pictures/move_test/position4.jpg'
+            maps = self.check_move(path1, path2, map_curr, map_new)
+            if maps is not None:
+                map_curr = maps[0]
+                map_new = maps[1]
 
 
 
