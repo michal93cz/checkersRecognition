@@ -101,11 +101,11 @@ def check_move(path1, path2, map_current, map_new):
         print('Inaccesible state! Return to the last acceptable')
         return
 
-        map_new[null_tile[0] * 4 + null_tile[1]][1] = 0
-        print("zmieniam", map_new[active_tile[0] * 4 + null_tile[1]][0], 'z', map_new[active_tile[0] * 4 + null_tile[1]][1], 'na ',map_current[null_tile[0] * 4 + null_tile[1] + k][1])
-        map_new[active_tile[0] * 4 + null_tile[1]][1] = map_current[null_tile[0] * 4 + null_tile[1] + k][1]
-        map_current = copy.deepcopy(map_new)            #ONLY if test in logic will prove that it was valid move
-        return[map_current, map_new]
+    map_new[null_tile[0] * 4 + null_tile[1]][1] = 0
+    print("zmieniam", map_new[active_tile[0] * 4 + null_tile[1]][0], 'z', map_new[active_tile[0] * 4 + null_tile[1]][1], 'na ',map_current[null_tile[0] * 4 + null_tile[1] + k][1])
+    map_new[active_tile[0] * 4 + null_tile[1]][1] = map_current[null_tile[0] * 4 + null_tile[1] + k][1]
+    map_current = copy.deepcopy(map_new)            #ONLY if test in logic will prove that it was valid move
+    return[map_current, map_new]
 
         # temp = map_current[null_tile[0] * 4 + null_tile[1] + 1][1]
         # map_new[active_tile[0] * 4 + active_tile[1] + 1] = temp
@@ -156,8 +156,8 @@ mask = cv2.inRange(hsv, lower_blue, upper_blue)
 map_curr = starting_map()
 map_new = starting_map()
 
-path1 = '../pictures/move_test/position2.jpg'
-path2 = '../pictures/move_test/position2.jpg'
+path1 = '../pictures/move_test/position1.jpg'
+path2 = '../pictures/move_test/position1.jpg'
 print(map_curr)
 
 maps = check_move(path1, path2, map_curr, map_new)                              #Dziwne przypisanie bo nie zwojowalem wewnatrz funkcji zmiany zawartosci listy podanej jako parametr
@@ -166,8 +166,8 @@ if maps is not None:
     map_new = maps[1]
 
 print(map_curr)
-path1 = '../pictures/move_test/position2.jpg'
-path2 = '../pictures/move_test/position2.jpg'
+path1 = '../pictures/move_test/position1.jpg'
+path2 = '../pictures/move_test/position1.jpg'
 maps = check_move(path1, path2, map_curr, map_new)
 if maps is not None:
     map_curr = maps[0]

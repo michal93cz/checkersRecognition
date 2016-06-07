@@ -83,24 +83,30 @@ def check_move(path1, path2, map_current, map_new):
             if state1[i][j] != state2[i][j]:
                 difference.append([i, j, state1[i][j], state2[i][j]])
 
-    k = None
-    if len(difference) > 2:                                                                                             #if difference is more than 2 then the change is not valid
-        print("State change not possible, number of tiles that do not match: " + len(null_tile))
-    elif len(difference) == 2:
-        if difference[0][3] == 'white':
-            null_tile = difference[0]
-            active_tile = difference[1]
-            k = -1
-        else:
-            null_tile = difference[1]
-            active_tile = difference[0]
-            k = 1
+    try:
+        k = None
+        if len(difference) > 2:                                                                                             #if difference is more than 2 then the change is not valid
+            print("State change not possible, number of tiles that do not match: " + len(null_tile))
+        elif len(difference) == 2:
+            if difference[0][3] == 'white':
+                null_tile = difference[0]
+                active_tile = difference[1]
+                k = -1
+            else:
+                null_tile = difference[1]
+                active_tile = difference[0]
+                k = 1
+        elif len(difference) == 0:
+            return
+    except Exception as e:
+        print('Inaccesible state! Return to the last acceptable')
+        return
 
-        map_new[null_tile[0] * 4 + null_tile[1]][1] = 0
-        print("zmieniam", map_new[active_tile[0] * 4 + null_tile[1]][0], 'z', map_new[active_tile[0] * 4 + null_tile[1]][1], 'na ',map_current[null_tile[0] * 4 + null_tile[1] + k][1])
-        map_new[active_tile[0] * 4 + null_tile[1]][1] = map_current[null_tile[0] * 4 + null_tile[1] + k][1]
-        map_current = copy.deepcopy(map_new)            #ONLY if test in logic will prove that it was valid move
-        return[map_current, map_new]
+    map_new[null_tile[0] * 4 + null_tile[1]][1] = 0
+    print("zmieniam", map_new[active_tile[0] * 4 + null_tile[1]][0], 'z', map_new[active_tile[0] * 4 + null_tile[1]][1], 'na ',map_current[null_tile[0] * 4 + null_tile[1] + k][1])
+    map_new[active_tile[0] * 4 + null_tile[1]][1] = map_current[null_tile[0] * 4 + null_tile[1] + k][1]
+    map_current = copy.deepcopy(map_new)            #ONLY if test in logic will prove that it was valid move
+    return[map_current, map_new]
 
         # temp = map_current[null_tile[0] * 4 + null_tile[1] + 1][1]
         # map_new[active_tile[0] * 4 + active_tile[1] + 1] = temp
@@ -147,16 +153,16 @@ ret, img = cap.read()
 # ustawienie poczatkowe reprezentacji planszy
 if ret:
     normal = cv2.cvtColor(img, cv2.COLORMAP_BONE)
-    scipy.misc.imsave('old.jpg', normal)
-    cv2.imwrite('old2.jpg', normal)
+    #scipy.misc.imsave('old.jpg', normal)
+    #cv2.imwrite('old2.jpg', normal)
     map_curr = starting_map()
     map_new = starting_map()
     #path1 = scipy.misc.imread('old.jpg')
     path1 = cv2.imread('old2.jpg')
-    path2 = cv2.imread('../pictures/move_test/position2.jpg')
+    path2 = cv2.imread('old2.jpg')
 
 while(True):
-    cv2.waitKey(4000)
+    #cv2.waitKey(4000)
     # img = cv2.imread('../pictures/day_light/position1.jpg')
     # img = cv2.imread('../pictures/day_light/position4.jpg')
     # img = cv2.medianBlur(img, 7)
@@ -171,14 +177,17 @@ while(True):
         # If found, add object points, image points (after refining them)
     if ret == True:
 
+        cv2.waitKey(1000)
         normal = cv2.cvtColor(img, cv2.COLORMAP_BONE)
         #scipy.misc.imsave('new.jpg', normal)
         cv2.imwrite('new.jpg',normal)
         #path2 = scipy.misc.imread('new.jpg')
+        path2 = cv2.imread('new.jpg')
         maps = check_move(path1, path2, map_curr, map_new)                              #Dziwne przypisanie bo nie zwojowalem wewnatrz funkcji zmiany zawartosci listy podanej jako parametr
         #path2 = scipy.misc.imread('new.jpg')
-        map_curr = maps[0]
-        map_new = maps[1]
+        if maps is not None:
+            map_curr = maps[0]
+            map_new = maps[1]
         print(map_curr)
 
         cv2.waitKey(delay=100)
