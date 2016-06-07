@@ -31,7 +31,7 @@ def first_state_matrix():
     return matrix
 
 def get_image_state(img):
-    #img = cv2.imread(img)
+    img = cv2.imread(img)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -70,6 +70,80 @@ def get_image_state(img):
         str_state_table = Sampler.check_colors(img, result)
         return str_state_table
 
+def map_indexes(x, y):
+    if(x == 0):
+        if(y == 1):
+            return 0
+        if(y == 3):
+            return 1
+        if(y == 5):
+            return 2
+        if(y == 7):
+            return 3
+    if(x == 1):
+        if(y == 0):
+            return 4
+        if(y == 2):
+            return 5
+        if(y == 4):
+            return 6
+        if(y == 6):
+            return 7
+    if(x == 2):
+        if(y == 1):
+            return 8
+        if(y == 3):
+            return 9
+        if(y == 5):
+            return 10
+        if(y == 7):
+            return 11
+    if(x == 3):
+        if(y == 0):
+            return 12
+        if(y == 2):
+            return 13
+        if(y == 4):
+            return 14
+        if(y == 6):
+            return 15
+    if(x == 4):
+        if(y == 1):
+            return 16
+        if(y == 3):
+            return 17
+        if(y == 5):
+            return 18
+        if(y == 7):
+            return 19
+    if(x == 5):
+        if(y == 0):
+            return 20
+        if(y == 2):
+            return 21
+        if(y == 4):
+            return 22
+        if(y == 6):
+            return 23
+    if(x == 6):
+        if(y == 1):
+            return 24
+        if(y == 3):
+            return 25
+        if(y == 5):
+            return 26
+        if(y == 7):
+            return 27
+    if(x == 7):
+        if(y == 0):
+            return 28
+        if(y == 2):
+            return 29
+        if(y == 4):
+            return 30
+        if(y == 6):
+            return 31
+
 def check_move(path1, path2, map_current, map_new):
     state1 = get_image_state(path1)
     state2 = get_image_state(path2)
@@ -95,17 +169,30 @@ def check_move(path1, path2, map_current, map_new):
                 null_tile = difference[1]
                 active_tile = difference[0]
                 k = 0
+            x = null_tile[0]
+            y = null_tile[1]
+            index_null = map_indexes(x,y)
+            map_new[index_null][1] = 0
+            print("zmieniam", map_new[active_tile[0] * 4 + null_tile[1]][0], 'z', map_new[active_tile[0] * 4 + null_tile[1]][1], 'na ',map_current[null_tile[0] * 4 + null_tile[1] + k][1])
+            x = active_tile[0]
+            y = active_tile[1]
+            index_active = map_indexes(x,y)
+            #map_new[index][1] = map_current
+            map_new[index_active][1] = map_current[index_null][1]
+            map_current = copy.deepcopy(map_new)
         elif len(difference) == 0:
             return
+        elif len(difference) == 1:
+            null_tile = difference[0]
+            x = null_tile[0]
+            y = null_tile[1]
+            index_null = map_indexes(x,y)
+            map_new[index_null][1] = 0
+
     except Exception as e:
         print('Inaccesible state! Return to the last acceptable')
         return
-    a = null_tile[0] * 4
-    a2 = a + null_tile[1]
-    map_new[null_tile[0] * 4 + null_tile[1] + k][1] = 0
-    print("zmieniam", map_new[active_tile[0] * 4 + null_tile[1]][0], 'z', map_new[active_tile[0] * 4 + null_tile[1]][1], 'na ',map_current[null_tile[0] * 4 + null_tile[1] + k][1])
-    map_new[active_tile[0] * 4 + null_tile[1]][1] = map_current[null_tile[0] * 4 + null_tile[1] + k][1]
-    map_current = copy.deepcopy(map_new)            #ONLY if test in logic will prove that it was valid move
+                #ONLY if test in logic will prove that it was valid move
     return[map_current, map_new]
 
         # temp = map_current[null_tile[0] * 4 + null_tile[1] + 1][1]
@@ -158,7 +245,7 @@ map_curr = starting_map()
 map_new = starting_map()
 
 path1 = '../pictures/move_test2/1.jpg'
-path2 = '../pictures/move_test/2.jpg'
+path2 = '../pictures/move_test2/2.jpg'
 print(map_curr)
 
 maps = check_move(path1, path2, map_curr, map_new)                              #Dziwne przypisanie bo nie zwojowalem wewnatrz funkcji zmiany zawartosci listy podanej jako parametr
@@ -167,24 +254,40 @@ if maps is not None:
     map_new = maps[1]
 
 print(map_curr)
-path1 = '../pictures/move_test/2.jpg'
-path2 = '../pictures/move_test/3.jpg'
+path1 = '../pictures/move_test2/2.jpg'
+path2 = '../pictures/move_test2/3.jpg'
 maps = check_move(path1, path2, map_curr, map_new)
 if maps is not None:
     map_curr = maps[0]
     map_new = maps[1]
 
 print(map_curr)
-path1 = '../pictures/move_test/3.jpg'
-path2 = '../pictures/move_test/4.jpg'
+path1 = '../pictures/move_test2/3.jpg'
+path2 = '../pictures/move_test2/4.jpg'
 maps = check_move(path1, path2, map_curr, map_new)
 if maps is not None:
     map_curr = maps[0]
     map_new = maps[1]
 
 print(map_curr)
-path1 = '../pictures/move_test/4.jpg'
-path2 = '../pictures/move_test/5.jpg'
+path1 = '../pictures/move_test2/4.jpg'
+path2 = '../pictures/move_test2/5.jpg'
+maps = check_move(path1, path2, map_curr, map_new)
+if maps is not None:
+    map_curr = maps[0]
+    map_new = maps[1]
+print(map_curr)
+
+path1 = '../pictures/move_test2/5.jpg'
+path2 = '../pictures/move_test2/6.jpg'
+maps = check_move(path1, path2, map_curr, map_new)
+if maps is not None:
+    map_curr = maps[0]
+    map_new = maps[1]
+print(map_curr)
+
+path1 = '../pictures/move_test2/6.jpg'
+path2 = '../pictures/move_test2/7.jpg'
 maps = check_move(path1, path2, map_curr, map_new)
 if maps is not None:
     map_curr = maps[0]
