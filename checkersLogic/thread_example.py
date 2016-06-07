@@ -1,7 +1,6 @@
 from Tkinter import *
 import time
 import threading
-import random
 import Queue
 import string
 
@@ -14,6 +13,8 @@ class GuiPart:
     DELAY = 0  # 885=1 sec.
     SQUARESIZE = 50
     PIECE_DIAMETER = 35
+    CHECK_COMPLETE = 0
+    ACCEPT_MOVE = 0
 
     def __init__(self, master, queue):
         self.queue = queue
@@ -43,6 +44,18 @@ class GuiPart:
         self.make_display()
 
         self.begin_new_game()
+
+    def get_accept_move(self):
+        return self.ACCEPT_MOVE
+
+    def set_accept_move(self, value):
+        self.ACCEPT_MOVE = value
+
+    def get_check_complete(self):
+        return self.CHECK_COMPLETE
+
+    def set_check_complete(self, value):
+        self.CHECK_COMPLETE = value
 
     def make_display(self):
         """This function will create the Canvas for the board, and then the board.
@@ -652,7 +665,7 @@ class GuiPart:
 
         while self.queue.qsize():
             try:
-                print "Accept move: ", ACCEPT_MOVE
+                # print "Accept move: ", ACCEPT_MOVE
                 square_from, piece, square_to = self.queue.get(0)
                 # Check contents of message and do whatever is needed. As a
                 # simple test, print it (in real life, you would
@@ -665,8 +678,10 @@ class GuiPart:
                         break
                     self.master.update()
                     if self.got_move:
+                        self.set_accept_move(0)
                         if not self.check_move():
-                            ACCEPT_MOVE = 1
+                            self.set_accept_move(1)
+
                             # whenever a move is gotten which is correct, do this stuff
                             self.do_move()
                             self.cleanup_move(2)
@@ -674,6 +689,7 @@ class GuiPart:
                             self.cleanup_move(3)
                         # whenever a move is goten, do this stuff
                         self.cleanup_move(1)
+                    self.set_check_complete(1)
                 if self.GameDone() == 2:
                     self.c.create_text(int(self.c.cget("height")) / 2, \
                                        int(self.c.cget("width")) / 2, \
@@ -774,7 +790,15 @@ class ThreadedClient:
 
         self.queue.put(move)
 
-        self.main_checkers_table = new_table
+        while self.gui.get_check_complete() == 0:
+            print 'wait for complete'
+            time.sleep(0.5)
+        if self.gui.get_accept_move():
+            print 'Accept move is 1'
+            self.main_checkers_table = new_table
+            self.gui.set_accept_move(0)
+
+        self.gui.set_check_complete(0)
 
     def periodicCall(self):
         """
@@ -802,7 +826,7 @@ class ThreadedClient:
             # random intervals. Replace the following two lines with the real
             # thing.
 
-            time.sleep(4)
+            time.sleep(1)
             self.counter += 1
             if self.counter == 1:
                 new_table = [[33, 77], [34, 78], [35, 79], [36, 80],
@@ -841,12 +865,22 @@ class ThreadedClient:
                              [57, 69], [58, 70], [59, 71], [60, 72],
                              [61, 73], [62, 74], [63, 75], [64, 76]]
 
+            #zly ruch:
+            if self.counter == 5:
+                new_table = [[33, 77], [34, 78], [35, 79], [36, 80],
+                             [37, 81], [38, 82], [39, 83], [40, 84],
+                             [41, 0], [42, 86], [43, 67], [44, 88],
+                             [45, 85], [46, 0], [47, 0], [48, 87],
+                             [49, 0], [50, 0], [51, 0], [52, 0],
+                             [53, 65], [54, 66], [55, 0], [56, 68],
+                             [57, 69], [58, 70], [59, 71], [60, 72],
+                             [61, 73], [62, 74], [63, 75], [64, 76]]
+
             self.checkTables(new_table)
 
     def endApplication(self):
         self.running = 0
 
-rand = random.Random()
 root = Tk()
 
 client = ThreadedClient(root)
