@@ -978,7 +978,7 @@ class ThreadedClient:
                 y = null_tile[1]
                 index_null = self.map_indexes(x,y)
                 map_new[index_null][1] = 0
-
+                map_current = copy.deepcopy(map_new)
         except Exception as e:
             print('Inaccesible state! Return to the last acceptable')
             return
@@ -1025,6 +1025,7 @@ class ThreadedClient:
 
         if count > 1 and count < 4:
             if count == 2:
+                print '2 zmiany'
                 for move in squares_from:
                     if move[1] == squares_to[0][1]:
                         square_from = move[0]
@@ -1036,6 +1037,7 @@ class ThreadedClient:
                 self.queue.put(move)
 
             if count == 3 and self.gui.jumps[0]:
+                print '3 zmiany z jumbs'
                 for move in squares_from:
                     if move[1] == squares_to[0][1]:
                         square_from = move[0]
@@ -1046,6 +1048,7 @@ class ThreadedClient:
                 print count, move, piece_remove
                 self.queue.put(move)
             if count == 3 and not (self.gui.jumps[0]):
+                print '3 zmiany bez jumba'
                 self.gui.set_accept_move(0)
                 self.gui.set_check_complete(1)
             while self.gui.get_check_complete() == 0:
@@ -1121,20 +1124,37 @@ class ThreadedClient:
                 maps = self.check_move(path1, path2, map_curr, map_new)                              #Dziwne przypisanie bo nie zwojowalem wewnatrz funkcji zmiany zawartosci listy podanej jako parametr
                 #path2 = scipy.misc.imread('new.jpg')
 
+                jump_now = FALSE
+                if self.gui.jumps[1]:
+                    print 'get in jump'
+                    jump_now = TRUE
+                    for jump in self.gui.jumps[1]:
+                        for piece in self.gui.pieces[self.gui.moving]:
+                                # print 'jump in for: ', jump
+                                # print 'piece: ', piece
+                                if piece == jump:
+                                    print 'Jump now is false'
+                                    jump_now = FALSE
+
+                # print 'jump: ', self.gui.jumps[0][0].split()
+
                 if maps is not None:
-                    if self.gui.jumps[0]:
+                    if jump_now:
                         count += 1
                     path1 = path2
                     map_curr = maps[0]
                     map_new = maps[1]
-                    if count == 2 and self.gui.jumps[0]:
+                    if count == 2 and jump_now:
                         count = 0
                         self.checkTables(map_curr)
-                    if not (self.gui.jumps[0]):
+                    if not (jump_now):
                         self.checkTables(map_curr)
 
 
-                print(map_curr)
+
+                print 'Last good: ', self.main_checkers_table
+                print 'Current  : ', map_curr
+                print ' '
                 cv2.waitKey(delay=100)
 
 

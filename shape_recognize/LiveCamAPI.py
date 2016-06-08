@@ -77,6 +77,80 @@ def get_image_state(img):
 
         return str_state_table
 
+def map_indexes(x, y):
+    if(x == 0):
+        if(y == 1):
+            return 0
+        if(y == 3):
+            return 1
+        if(y == 5):
+            return 2
+        if(y == 7):
+            return 3
+    if(x == 1):
+        if(y == 0):
+            return 4
+        if(y == 2):
+            return 5
+        if(y == 4):
+            return 6
+        if(y == 6):
+            return 7
+    if(x == 2):
+        if(y == 1):
+            return 8
+        if(y == 3):
+            return 9
+        if(y == 5):
+            return 10
+        if(y == 7):
+            return 11
+    if(x == 3):
+        if(y == 0):
+            return 12
+        if(y == 2):
+            return 13
+        if(y == 4):
+            return 14
+        if(y == 6):
+            return 15
+    if(x == 4):
+        if(y == 1):
+            return 16
+        if(y == 3):
+            return 17
+        if(y == 5):
+            return 18
+        if(y == 7):
+            return 19
+    if(x == 5):
+        if(y == 0):
+            return 20
+        if(y == 2):
+            return 21
+        if(y == 4):
+            return 22
+        if(y == 6):
+            return 23
+    if(x == 6):
+        if(y == 1):
+            return 24
+        if(y == 3):
+            return 25
+        if(y == 5):
+            return 26
+        if(y == 7):
+            return 27
+    if(x == 7):
+        if(y == 0):
+            return 28
+        if(y == 2):
+            return 29
+        if(y == 4):
+            return 30
+        if(y == 6):
+            return 31
+
 def check_move(path1, path2, map_current, map_new):
     state1 = get_image_state(path1)
     state2 = get_image_state(path2)
@@ -102,15 +176,31 @@ def check_move(path1, path2, map_current, map_new):
                 null_tile = difference[1]
                 active_tile = difference[0]
                 k = 0
+            x = null_tile[0]
+            y = null_tile[1]
+            index_null = map_indexes(x,y)
+            map_new[index_null][1] = 0
+            print("zmieniam", map_new[active_tile[0] * 4 + null_tile[1]][0], 'z', map_new[active_tile[0] * 4 + null_tile[1]][1], 'na ',map_current[null_tile[0] * 4 + null_tile[1] + k][1])
+            x = active_tile[0]
+            y = active_tile[1]
+            index_active = map_indexes(x,y)
+            #map_new[index][1] = map_current
+            map_new[index_active][1] = map_current[index_null][1]
+            map_current = copy.deepcopy(map_new)
+        elif len(difference) == 1:
+            null_tile = difference[0]
+            x = null_tile[0]
+            y = null_tile[1]
+            index_null = map_indexes(x,y)
+            map_new[index_null][1] = 0
+            map_current = copy.deepcopy(map_new)
         elif len(difference) == 0:
             return
+
     except Exception as e:
         print('Inaccesible state! Return to the last acceptable')
         return
-    map_new[null_tile[0] * 4 + null_tile[1] + k][1] = 0
-    print("zmieniam", map_new[active_tile[0] * 4 + null_tile[1]][0], 'z', map_new[active_tile[0] * 4 + null_tile[1]][1], 'na ',map_current[null_tile[0] * 4 + null_tile[1] + k][1])
-    map_new[active_tile[0] * 4 + null_tile[1]][1] = map_current[null_tile[0] * 4 + null_tile[1] + k][1]
-    map_current = copy.deepcopy(map_new)            #ONLY if test in logic will prove that it was valid move
+                #ONLY if test in logic will prove that it was valid move
     return[map_current, map_new]
 
         # temp = map_current[null_tile[0] * 4 + null_tile[1] + 1][1]
@@ -179,7 +269,7 @@ while(True):
         # If found, add object points, image points (after refining them)
     if ret == True:
 
-        time.sleep(1)
+        time.sleep(0.5)
         normal = cv2.cvtColor(img, cv2.COLORMAP_BONE)
         #scipy.misc.imsave('new.jpg', normal)
         cv2.imwrite('new.jpg',normal)
